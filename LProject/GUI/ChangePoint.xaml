@@ -1,0 +1,64 @@
+﻿<Window x:Class="LProject.ChangePoint"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:LProject.GUI"
+        mc:Ignorable="d"
+        Title="Редактирование маршрута" Height="270
+        " Width="356">
+    <Grid Margin="0,0,0,0">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Label Margin="19,19,221,222">Маршрут</Label>
+        <Label Margin="19,57,207,184">Интервал</Label>
+        <Label Margin="19,95,221,146">Номер</Label>
+        <Label Margin="19,121,221,120">Тип</Label>
+        <ComboBox
+            Name ="Way"
+            HorizontalAlignment="Left"
+            Margin="107,19,0,0"
+            VerticalAlignment="Top"
+            Width="149"
+            Loaded="wayComboBox_Loaded"
+            SelectionChanged="wayComboBox_SelectionChanged"/>
+        <ComboBox
+            Name ="Interval"
+            HorizontalAlignment="Left"
+            Margin="107,57,0,0"
+            VerticalAlignment="Top"
+            Width="149"
+            Loaded="intervalComboBox_Loaded"
+            SelectionChanged="intervalComboBox_SelectionChanged"/>
+        <xctk:IntegerUpDown Name="wayNumber" Margin="107,100,195,159" Value="3"/>
+        <TextBox Name="Type" Margin="107,133,123,121"/>
+        <Button x:Name="Cancel" Content="Отмена"
+                    Click="CancelClick" Margin="19,186,202,54"/>
+        <Button x:Name="AddPoint" Content="Добавить"
+                    Click="AddPointClick" Margin="195,186,0,54" HorizontalAlignment="Left" Width="79"/>
+    </Grid>
+</Window>

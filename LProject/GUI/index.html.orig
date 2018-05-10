@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(init);
+        var myMap,
+            myPlacemark,
+            address,
+            strError,
+            clickedPointId;
+            numCurrPoint,
+            currColor,
+            newPoint,
+            clickedPointId;
+
+        function init() {
+            myMap = new ymaps.Map('map', {
+                center: [55.753994, 37.622093],
+                zoom: 7,
+                controls: ['zoomControl', 'searchControl', 'typeSelector', 'routeButtonControl']
+            });
+            }
+
+        function drawRoutes(routes) {
+
+            for (var i = 0; i < routes.length; i++) {
+                var route = routes[i];
+                var color = route['routeColor'];
+
+                var pointCollection = new ymaps.GeoObjectCollection();
+
+                for (var j = 0; j < route['points'].length; j++) {
+                    var point = route['points'][j];
+                    var currPointType = point['type'];
+
+                    //alert(i + "   " + j);
+
+                    ymaps.geocode(point['address']).then(function (res) {
+                        var firstGeoObject = res.geoObjects.get(0),
+                            coords = firstGeoObject.geometry.getCoordinates(),
+                            bounds = firstGeoObject.properties.get('boundedBy');
+
+                        if (!firstGeoObject) {
+                            alert("Ошибка");
+                            return;
+                        }
+
+                        firstGeoObject.options.set('preset', 'islands#darkBlueDotIconWithCaption');
+                        firstGeoObject.properties.set('iconCaption', firstGeoObject.getAddressLine());
+                        myMap.setBounds(bounds, {
+                            checkZoomRange: true
+                        });
+
+                        var html = getPoint(color, currPointType);  
+                        var squareLayout = ymaps.templateLayoutFactory.createClass(html);
+
+                        var squarePlacemark = new ymaps.Placemark(
+                            coords, {
+                                hintContent: true
+                            }, {
+                                iconLayout: squareLayout,
+                                iconShape: {
+                                    type: 'Rectangle',
+                                    coordinates: [
+                                        [-25, -25], [25, 25]
+                                    ]
+                                }
+                            }
+                        );
+
+<<<<<<< HEAD
+                        squarePlacemark.events.add('mousemove', function (e) {                          
+                            ymaps.geocode(squarePlacemark.geometry.getCoordinates(), {results: 1}).then(function (res) {
+                                    var newContent = res.geoObjects.get(0) ?
+                                        res.geoObjects.get(0).properties.get('name') :
+                                        'Не удалось определить адрес.';
+                                    squarePlacemark.properties.set('hintContent', newContent);
+                            });   
+||||||| merged common ancestors
+                        squarePlacemark.events.add('mousemove', function (e) {                          
+                            ymaps.geocode(squarePlacemark.geometry.getCoordinates(), {results: 1}).then(function (res) {
+                                    var newContent = res.geoObjects.get(0) ?
+                                        res.geoObjects.get(0).properties.get('name') :
+                                        'Не удалось определить адрес.';
+                                    squarePlacemark.properties.set('hintContent', newContent);
+                            });   
+=======
+
+                        squarePlacemark.events.add('mousemove', function (e) {                          
+                            ymaps.geocode(squarePlacemark.geometry.getCoordinates(), {results: 1}).then(function (res) {
+                                    var newContent = res.geoObjects.get(0) ?
+                                        res.geoObjects.get(0).properties.get('name') :
+                                        'Не удалось определить адрес.';
+                                    squarePlacemark.properties.set('hintContent', newContent);
+                            });   
+>>>>>>> 7e456ff95ed515492588bbcee6a4df97a926ad2b
+                        });
+                        
+                        squarePlacemark.events.add('click', function (e) {          
+                            var clickPointEvent = new MessageEvent('clickPointEvent', { 'view': window, 'bubbles': false, 'cancelable': false, 'data': point['id'] });
+                            document.dispatchEvent(clickPointEvent);
+                            e.stopPropagation();
+                        });
+
+                        pointCollection.add(squarePlacemark);                    
+                    });
+                }
+
+                myMap.geoObjects.add(pointCollection);
+                pointCollection.removeAll();
+            }
+
+        }
+
+
+        function getPoint(currColor, numCurrPoint) {
+            switch (numCurrPoint) {
+                case (1):
+                    newPoint = `<svg height="20px" width="20px" viewBox="0 0 200 200">
+			                        <g transform="translate(0.000000,200.000000) scale(0.100000,-0.100000)" >
+			                        <path fill="`+ currColor + `" d="M919 1876 c-170 -49 -314 -201 -350 -367 -19 -88 -7 -222 28 -304 63
+			                        -149 447 -975 454 -975 10 0 449 955 471 1025 34 108 21 269 -29 370 -49 98
+			                        -155 192 -264 236 -68 27 -239 36 -310 15z m218 -367 c34 -21 73 -90 73 -130
+			                        0 -49 -42 -112 -90 -136 -56 -29 -84 -29 -140 0 -60 30 -95 96 -85 157 9 51
+			                        63 116 109 129 40 13 93 4 133 -20z"/></g></svg>`;
+                    break;
+                case (2):
+                    newPoint = `<svg width="20px" height="20px" viewBox="0 0 1000 1000">
+			                        <g transform="translate(0.000000,1000.000000) scale(0.100000,-0.100000)">
+			                        <path fill="`+ currColor + `" d="M4686 9749 c-933 -53 -1830 -380 -2586 -943 -358 -266 -720 -633
+			                        -992 -1007 -1010 -1387 -1172 -3234 -418 -4774 245 -501 542 -910 946 -1306
+			                        366 -358 742 -623 1209 -854 520 -257 1015 -401 1620 -472 214 -25 797 -25
+			                        1010 0 611 72 1097 214 1620 472 467 231 840 494 1209 855 705 689 1167 1552
+			                        1340 2500 337 1856 -461 3712 -2045 4753 -862 567 -1870 836 -2913 776z m724
+			                        -924 c476 -58 871 -177 1300 -391 385 -193 670 -402 990 -723 244 -246 407
+			                        -454 570 -727 337 -565 510 -1162 527 -1819 16 -636 -110 -1213 -389 -1770
+			                        -186 -372 -420 -697 -713 -990 -293 -294 -607 -522 -980 -711 -405 -205 -808
+			                        -328 -1275 -391 -194 -26 -746 -26 -940 0 -462 62 -868 186 -1269 387 -1067
+			                        534 -1837 1565 -2035 2723 -45 261 -51 339 -51 652 1 381 24 578 106 907 336
+			                        1340 1388 2397 2739 2752 222 58 471 99 735 120 113 9 556 -3 685 -19z"/>
+			                        </g></svg>`;
+                    break;
+                case (3):
+                    newPoint = `<svg width="20px" height="20px" viewBox="0 0 2000 2000">
+			                        <g transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+			                        <path fill="`+ currColor + `" d="M3106 13986 c-1263 -2186 -2296 -3980 -2295 -3988 0 -7 1032 -1797
+			                        2292 -3978 l2292 -3965 4605 0 4605 0 2292 3965 c1260 2181 2292 3971 2292
+			                        3978 1 8 -1032 1802 -2295 3988 l-2297 3974 -4597 0 -4597 0 -2297 -3974z
+			                        m12911 -506 c1286 -2225 2002 -3472 1999 -3485 -2 -11 -903 -1577 -2003 -3480
+			                        l-2000 -3460 -4013 0 -4013 0 -2000 3460 c-1175 2033 -2001 3470 -2001 3485 0
+			                        15 763 1346 1988 3465 1093 1892 1994 3450 2002 3463 l14 22 4012 -2 4012 -3
+			                        2003 -3465z"/></g></svg>`;
+                    break;
+                case (4):
+                    newPoint = `<svg width="20px" height="20px" viewBox="0 0 1104 1024">
+			                        <g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)">
+			                        <path fill="`+ currColor + `" d="M5456 10182 c-3 -5 -298 -852 -656 -1883 -376 -1082 -658 -1879 -667
+			                        -1886 -12 -9 -63 -13 -172 -13 -86 0 -806 -14 -1601 -30 -795 -16 -1611 -33
+			                        -1815 -36 -203 -4 -379 -10 -389 -14 -15 -5 329 -270 1575 -1215 877 -664
+			                        1594 -1209 1595 -1209 0 -1 -260 -862 -578 -1915 -319 -1052 -577 -1915 -574
+			                        -1918 3 -3 17 4 33 14 15 11 754 525 1641 1142 1539 1071 1614 1122 1635 1108
+			                        12 -8 750 -521 1641 -1141 890 -620 1622 -1126 1626 -1124 4 2 -253 862 -571
+			                        1913 -318 1051 -579 1912 -579 1915 0 4 718 550 1595 1215 1144 869 1589 1212
+			                        1577 1216 -9 3 -181 9 -382 12 -201 4 -1029 20 -1840 37 -811 16 -1539 31
+			                        -1617 32 -78 2 -144 6 -148 10 -4 3 -301 853 -661 1889 -360 1035 -656 1884
+			                        -658 1886 -2 3 -7 0 -10 -5z m189 -1747 c281 -809 822 -2367 835 -2402 l12
+			                        -33 176 0 c98 0 472 -7 832 -15 360 -7 923 -19 1250 -25 327 -7 655 -15 728
+			                        -18 l132 -7 -1240 -940 c-682 -517 -1240 -946 -1240 -952 0 -10 876 -2919 895
+			                        -2972 7 -18 105 -86 -1299 891 -686 478 -1253 871 -1260 873 -6 2 -585 -396
+			                        -1286 -885 -701 -488 -1276 -885 -1277 -882 -2 4 199 675 447 1492 l450 1485
+			                        -30 25 c-15 14 -575 439 -1242 945 l-1214 920 131 7 c71 3 402 11 735 17 333
+			                        7 783 16 1000 21 217 5 589 12 825 16 l430 7 505 1454 c572 1648 519 1497 524
+			                        1492 2 -2 84 -233 181 -514z"/></g></svg>`;
+                    break;
+                case (5):
+                    newPoint = `<svg width="20px" height="20px" viewBox="0 0 500 500">
+			                        <g transform="translate(0.000000,500.000000) scale(0.100000,-0.100000)">
+			                        <path fill="`+ currColor + `" d="M1845 3243 c-357 -620 -838 -1453 -1068 -1851 -229 -398 -417 -725
+			                        -417 -728 0 -2 963 -4 2140 -4 1177 0 2140 2 2140 4 0 3 -188 330 -417 728
+			                        -230 398 -710 1231 -1068 1851 -357 619 -652 1126 -655 1126 -3 0 -297 -507
+			                        -655 -1126z m1662 -761 l1002 -1737 -1004 -3 c-553 -1 -1457 -1 -2010 0
+			                        l-1004 3 1002 1737 c551 956 1004 1737 1007 1737 3 0 456 -781 1007 -1737z"/>
+			                        </g></svg>`;
+                    break;
+                case (6):
+                    newPoint = `<svg  x="0px" y="0px" width="20px" height="20px" viewBox="0 0 535.5 535.5">
+			                        <g><polygon fill="`+ currColor + `" points="535.5,210.375 344.25,210.375 267.75,19.125
+                                    191.25,210.375 0,210.375 172.125,325.125 95.625,516.375 267.75,401.625
+                                    439.875,516.375 363.375,325.125 "/></g></svg>`;
+                    break;
+                case (7):
+                    newPoint = `<svg width="20px" height="20px" viewBox="0 0 120 120">
+			                        <g transform="translate(0.000000,120.000000) scale(0.100000,-0.100000)">
+			                        <path fill="`+ currColor + `" d="M435 1181 c-110 -32 -175 -71 -260 -156 -86 -86 -132 -164 -160 -272
+			                        -19 -73 -19 -233 0 -306 54 -207 225 -378 432 -432 73 -19 233 -19 306 0 206
+			                        53 379 226 432 432 19 73 19 233 0 306 -54 208 -224 377 -432 431 -82 21 -240
+			                        20 -318 -3z m235 -396 l0 -115 115 0 115 0 0 -70 0 -70 -115 0 -115 0 0 -115
+			                        0 -115 -70 0 -70 0 0 115 0 115 -115 0 -115 0 0 70 0 70 115 0 115 0 0 115 0
+			                        115 70 0 70 0 0 -115z"/></g></svg>`;
+                    break;
+                case (8):
+                    newPoint = `<svg width="20px" height="20px" viewBox="0 0 768 768">
+			                        <g transform="translate(0.000000,768.000000) scale(0.100000,-0.100000)">
+			                        <path fill="`+ currColor + `" d="M1490 6190 c-20 -20 -20 -33 -20 -2350 0 -2317 0 -2330 20 -2350 20
+			                        -20 33 -20 2350 -20 2317 0 2330 0 2350 20 20 20 20 33 20 2350 0 2317 0 2330
+			                        -20 2350 -20 20 -33 20 -2350 20 -2317 0 -2330 0 -2350 -20z m4590 -2350 l0
+			                        -2240 -2240 0 -2240 0 0 2240 0 2240 2240 0 2240 0 0 -2240z"/>
+			                        </g></svg>`;
+                    break;
+                case (9):
+                    newPoint = `<svg width="20px" height="20px" viewBox="0 0 800 800">a>
+			                        <g transform="translate(0.000000,800.000000) scale(0.100000,-0.100000)">
+			                        <path fill="`+ currColor + `" d="M3690 7914 c-19 -2 -80 -9 -135 -15 -1197 -127 -2302 -840 -2924
+			                        -1884 -291 -490 -458 -984 -533 -1575 -18 -143 -18 -737 0 -880 115 -916 496
+			                        -1705 1126 -2336 621 -621 1398 -1000 2296 -1121 195 -26 765 -26 960 0 495
+			                        67 931 204 1348 423 1044 548 1797 1556 2021 2704 58 301 66 393 66 770 0 377
+			                        -8 469 -66 767 -147 754 -523 1458 -1073 2009 -551 550 -1255 927 -2009 1073
+			                        -282 55 -377 63 -722 66 -176 2 -336 1 -355 -1z"/></g></svg>`;
+                    break;
+                case (10):
+                    newPoint = `<svg width="20px" height="20px" viewBox="0 0 400 400">
+		                            <g fill="`+ currColor + `" transform="translate(0.000000,400.000000) scale(0.100000,-0.100000)">
+		                            <path d="M1750 3989 c-347 -45 -677 -178 -957 -385 -100 -74 -323 -297 -397
+		                            -397 -211 -284 -342 -613 -386 -967 -13 -109 -13 -371 0 -480 44 -354 176
+		                            -685 386 -967 76 -102 298 -324 397 -397 285 -211 613 -342 967 -386 109 -13
+		                            371 -13 480 0 354 44 684 176 967 386 100 75 322 297 397 397 210 283 342 613
+		                            386 967 13 109 13 371 0 480 -44 354 -176 684 -386 967 -75 100 -297 322 -397
+		                            397 -283 210 -613 342 -967 386 -98 12 -395 11 -490 -1z m611 -212 c170 -37
+		                            286 -78 444 -157 357 -179 636 -458 815 -815 78 -156 126 -294 161 -465 21
+		                            -101 24 -142 24 -340 0 -198 -3 -239 -24 -340 -67 -326 -217 -626 -430 -863
+		                            -163 -180 -334 -311 -546 -417 -156 -78 -294 -126 -465 -161 -101 -21 -142
+		                            -24 -340 -24 -198 0 -239 3 -340 24 -171 35 -309 83 -465 161 -359 180 -635
+		                            456 -815 815 -78 156 -126 294 -161 465 -21 101 -24 142 -24 340 0 198 3 239
+		                            24 340 67 324 213 619 427 860 238 268 566 470 903 555 184 47 259 55 486 51
+		                            178 -3 228 -8 326 -29z"/>
+		                            <path d="M1865 3270 c-573 -64 -1019 -478 -1121 -1040 -25 -138 -23 -354 5
+		                            -487 109 -519 505 -907 1021 -999 125 -22 335 -22 460 0 525 94 932 501 1026
+		                            1026 22 125 22 335 0 460 -81 457 -405 833 -842 979 -162 54 -384 79 -549 61z
+		                            m245 -190 c253 -29 477 -137 655 -315 274 -274 383 -667 286 -1035 -101 -382
+		                            -399 -680 -780 -780 -446 -118 -921 67 -1179 460 -117 177 -175 374 -175 590
+		                            0 216 58 413 175 590 225 343 625 535 1018 490z"/>
+		                            <path d="M1873 2535 c-204 -44 -365 -207 -408 -412 -86 -405 253 -744 658
+		                            -658 207 44 368 205 412 412 86 406 -256 746 -662 658z m272 -209 c76 -34 139
+		                            -97 178 -175 28 -58 32 -75 32 -151 0 -76 -4 -93 -32 -151 -39 -79 -102 -140
+		                            -181 -177 -48 -22 -71 -27 -142 -27 -71 0 -94 5 -142 27 -79 37 -142 98 -181
+		                            177 -29 59 -32 75 -32 151 0 70 5 95 27 141 85 185 295 267 473 185z"/>
+		                            </g></svg>`;
+                    break;
+            }
+
+            return newPoint;
+        }
+
+
+
+    </script>
+</head>
+
+<body>
+    <div id="map" style="width: 800px; height: 700px; padding: 0; margin: 0"></div>
+</body>
+
+</html>

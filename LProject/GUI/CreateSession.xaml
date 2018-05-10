@@ -1,0 +1,42 @@
+﻿<Window x:Class="LProject.CreateSession"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+      xmlns:local="clr-namespace:LProject"
+      mc:Ignorable="d" 
+      d:DesignHeight="300"
+      Title="Создание сессии" Height="300" Width="357.6">
+
+    <Grid Height="268" VerticalAlignment="Top" Margin="0,0,2,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="275.528"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Label Margin="10,86,264,157">Название:</Label>
+        <Label Margin="10,124,254,121">Менеджер:</Label>
+        <TextBox Name="Name_text" Margin="123,87,72,167">
+        </TextBox>
+        <ComboBox
+            Name ="peopleNames"
+            HorizontalAlignment="Left"
+            Margin="123,124,0,0"
+            VerticalAlignment="Top"
+            Width="149"
+            Loaded="ComboBox_Loaded"
+            SelectionChanged="ComboBox_SelectionChanged"/>
+        <Button Content="Отмена" x:Name ="Cancel" Click="Cancel_click"  Margin="19,218,264,33" />
+        <Button Content="Создать"  x:Name ="Create" Click="Create_click" Margin="255,218,30,33"/>
+        <CheckBox x:Name="AutoArchiveCheckBox" IsChecked="True"
+            Unchecked="checkBox_Unchecked"
+            Checked="checkBox_Checked"
+          Content="Автоматическая архивация через (дней):" Margin="19,179,76,73"/>
+        <xctk:IntegerUpDown Name="DayNumber" Margin="272,179,30,80" Value="2"/>
+    </Grid>
+</Window>

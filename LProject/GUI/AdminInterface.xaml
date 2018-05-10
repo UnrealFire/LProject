@@ -1,0 +1,86 @@
+﻿<Window x:Class="LProject.AdminInterface"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LProject"
+        mc:Ignorable="d"
+        Title="Администрирование" Height="300" Width="357.6">
+    
+    <Grid Height="319" VerticalAlignment="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Name="dummygrid" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.45*"></ColumnDefinition>
+                <ColumnDefinition Width="0.45*"></ColumnDefinition>
+                <ColumnDefinition Width="0.1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Name="dummywidth1"></Border>
+            <Border Grid.Column="1" Name="dummywidth2"></Border>
+            <Border Grid.Column="2" Name="dummywidth3"></Border>
+        </Grid>
+        
+        <TabControl>
+            <TabItem Header="Текущие" Margin="-2,-2,-35,0">
+                <StackPanel Margin="0,0,0,62">
+                    <ListView Height="226" x:Name="active">
+                        <ListView.View>
+                                <GridView>
+                                <GridViewColumn Width="{Binding ElementName=dummywidth1, Path=ActualWidth}" Header="Название" DisplayMemberBinding="{Binding Sessions}"/>
+                                <GridViewColumn Width="{Binding ElementName=dummywidth2, Path=ActualWidth}" Header="Менеджер" DisplayMemberBinding="{Binding Manager}"/>
+                                <GridViewColumn Width="{Binding ElementName=dummywidth3, Path=ActualWidth}">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                            <Button Click="Button_Click_Delete">
+                                                <StackPanel>
+                                                    <!--<Image Source="D:\img\del.png" />-->
+                                                </StackPanel>
+                                            </Button>
+                                        </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                <EventSetter Event="MouseLeftButtonUp" Handler="OpenSession" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                    </ListView>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Архив" Margin="35,0,-86,-2">
+                <StackPanel Margin="0,0,0,62">
+                    <ListView Height="226" Name="archived">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="{Binding ElementName=dummywidth1, Path=ActualWidth}" Header="Название" DisplayMemberBinding="{Binding Sessions}"/>
+                                <GridViewColumn Width="{Binding ElementName=dummywidth2, Path=ActualWidth}" Header="Менеджер" DisplayMemberBinding="{Binding Manager}"/>
+                                <GridViewColumn Width="{Binding ElementName=dummywidth3, Path=ActualWidth}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Delete" Click="Button_Click_Delete"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <EventSetter Event="MouseLeftButtonUp" Handler="OpenSession" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+        <Button Content="Создать" Height="20" x:Name ="Create_new" Click="CreateNew_click" Margin="212,2,80,297"/>
+        <Button Content="Настройки" Height="20" x:Name ="Settings" Click="Settings_click" Margin="275,2,5,297"/>
+    </Grid>
+</Window>

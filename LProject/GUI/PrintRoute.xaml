@@ -1,0 +1,240 @@
+﻿<Window x:Class="LProject.PrintRoute"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LProject"
+        mc:Ignorable="d"
+        Title="PrintRoute" Height="450" Width="750">
+
+
+
+    <Grid Name="GridPanel" Height="450" Width="750">
+        <StackPanel Height="500" Width="800">
+            <Grid Height="500" Width="800">
+                <StackPanel>
+                    <Grid x:Name="GridWeb" Height="243" VerticalAlignment="Top" HorizontalAlignment="Left" Width="437" Margin="260,100,0,0"/>
+                </StackPanel>
+                <StackPanel>
+                    <Grid Margin="200,100,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Height="243" Width="230" BorderBrush="Black" BorderThickness="2" Margin="-230,0,441,1">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel Width="228" Margin="0,0,-2,-2" >
+                                    <ListView Name="routesList">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Expander IsExpanded="True">
+                                                    <Expander.Header>
+                                                        <StackPanel>
+                                                            <Grid Width="180" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                <Label Target="{Binding ElementName=txtName}">
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <Image Source="http://cdn1.iconfinder.com/data/icons/fatcow/16/bullet_red.png" />
+                                                                        <TextBlock Text="{Binding Path=routeText}" />
+                                                                    </StackPanel>
+                                                                </Label>                                                                                                                     
+                                                            </Grid>
+                                                        </StackPanel>
+                                                    </Expander.Header>
+                                                    <StackPanel Margin="10,0,0,0">
+                                                        <Expander IsExpanded="True">
+                                                            <Expander.Header>
+                                                                <StackPanel>
+                                                                    <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                        <Label Target="{Binding ElementName=txtName}">
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <TextBlock Text="с 9:00 до 12:00" />
+                                                                            </StackPanel>
+                                                                        </Label>
+                                                                    </Grid>
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <Expander.Style>
+                                                                <Style>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Path=point1.Count}" Value="0">
+                                                                            <Setter Property="ToggleButton.Height" Value="0"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Expander.Style>
+                                                            <ListView Name="point1n" ItemsSource="{Binding point1}">
+                                                                <ListView.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <StackPanel>
+                                                                            <TextBlock Text="{Binding Path=pointText}"/>
+                                                                            <!--<ListBox x:Name="Point1" ItemTemplate="{StaticResource pointTemplate}"/> -->
+                                                                        </StackPanel>
+                                                                    </DataTemplate>
+                                                                </ListView.ItemTemplate>
+                                                            </ListView>
+
+                                                        </Expander>
+                                                        <Expander IsExpanded="True">
+                                                            <Expander.Header>
+                                                                <StackPanel>
+                                                                    <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                        <Label Target="{Binding ElementName=txtName}">
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <TextBlock Text="с 12:00 до 15:00" />
+                                                                            </StackPanel>
+                                                                        </Label>
+                                                                    </Grid>
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <Expander.Style>
+                                                                <Style>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Path=point2.Count}" Value="0">
+                                                                            <Setter Property="ToggleButton.Height" Value="0"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Expander.Style>
+                                                            <ListView Name="point2n" ItemsSource="{Binding point2}">
+                                                                <ListView.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <StackPanel>
+                                                                            <TextBlock Text="{Binding Path=pointText}"/>
+                                                                            <!--<ListBox x:Name="Point2" ItemTemplate="{StaticResource pointTemplate}"/> -->
+                                                                        </StackPanel>
+                                                                    </DataTemplate>
+                                                                </ListView.ItemTemplate>
+                                                            </ListView>
+
+                                                        </Expander>
+                                                        <Expander IsExpanded="True">
+                                                            <Expander.Header>
+                                                                <StackPanel>
+                                                                    <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                        <Label Target="{Binding ElementName=txtName}">
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <TextBlock Text="с 15:00 до 18:00" />
+                                                                            </StackPanel>
+                                                                        </Label>
+                                                                    </Grid>
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <Expander.Style>
+                                                                <Style>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Path=point3.Count}" Value="0">
+                                                                            <Setter Property="ToggleButton.Height" Value="0"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Expander.Style>
+                                                            <ListView Name="point3n" ItemsSource="{Binding point3}">
+                                                                <ListView.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <StackPanel>
+                                                                            <TextBlock Text="{Binding Path=pointText}"/>
+                                                                            <!--<ListBox x:Name="Point3" ItemTemplate="{StaticResource pointTemplate}"/> -->
+                                                                        </StackPanel>
+                                                                    </DataTemplate>
+                                                                </ListView.ItemTemplate>
+                                                               
+                                                            </ListView>
+
+                                                        </Expander>
+                                                        <Expander IsExpanded="True">
+                                                            <Expander.Header>
+                                                                <StackPanel>
+                                                                    <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                        <Label Target="{Binding ElementName=txtName}">
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <TextBlock Text="с 18:00 до 21:00" />
+                                                                            </StackPanel>
+                                                                        </Label>
+                                                                    </Grid>
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <Expander.Style>
+                                                                <Style>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Path=point4.Count}" Value="0">
+                                                                            <Setter Property="ToggleButton.Height" Value="0"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Expander.Style>
+                                                            <ListView Name="point4n" ItemsSource="{Binding point4}">
+                                                                <ListView.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <StackPanel>
+                                                                            <TextBlock Text="{Binding Path=pointText}"/>
+                                                                            <!--<ListBox x:Name="Point3" ItemTemplate="{StaticResource pointTemplate}"/> -->
+                                                                        </StackPanel>
+                                                                    </DataTemplate>
+                                                                </ListView.ItemTemplate>
+                                                               
+                                                            </ListView>
+
+                                                        </Expander>
+                                                        <Expander IsExpanded="True">
+                                                            <Expander.Header>
+                                                                <StackPanel>
+                                                                    <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                        <Label Target="{Binding ElementName=txtName}">
+                                                                            <StackPanel Orientation="Horizontal">
+                                                                                <TextBlock Text="с 9:00 до 21:00" />
+                                                                            </StackPanel>
+                                                                        </Label>
+                                                                    </Grid>
+                                                                </StackPanel>
+                                                            </Expander.Header>
+                                                            <Expander.Style>
+                                                                <Style>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Path=point5.Count}" Value="0">
+                                                                            <Setter Property="ToggleButton.Height" Value="0"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Expander.Style>
+                                                            <ListView Name="point5n" ItemsSource="{Binding point5}">
+                                                                <ListView.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <StackPanel>
+                                                                            <TextBlock Text="{Binding Path=pointText}"/>
+                                                                            <!--<ListBox x:Name="Point3" ItemTemplate="{StaticResource pointTemplate}"/> -->
+                                                                        </StackPanel>
+                                                                    </DataTemplate>
+                                                                </ListView.ItemTemplate>
+                                                                
+                                                            </ListView>
+
+                                                        </Expander>
+                                                    </StackPanel>
+
+                                                </Expander>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </StackPanel>
+                            </ScrollViewer>
+                            <!--</ScrollViewer>-->
+                        </Border>                        
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Window>
+
+

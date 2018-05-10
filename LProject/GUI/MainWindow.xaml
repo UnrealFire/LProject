@@ -1,0 +1,31 @@
+﻿<Window x:Class="LProject.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LProject"
+        mc:Ignorable="d"
+        Title="Авторизация" Height="350" Width="525">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ComboBox
+            Name ="peopleNames"
+            HorizontalAlignment="Left"
+            Margin="201,117,0,0"
+            VerticalAlignment="Top"
+            Width="120"
+            Loaded="ComboBox_Loaded"
+            SelectionChanged="ComboBox_SelectionChanged"/>
+        <StackPanel HorizontalAlignment="Left" Margin="201,155,0,125" Width="120">
+            <PasswordBox MaxLength="6" Height="20" Name="Pass"/>
+        </StackPanel>
+        <StackPanel HorizontalAlignment="Left" Margin="201,231,0,46" Width="120">
+            <Button x:Name="EnterButton" Content="Войти"
+                    Click="CheckPass_Click" IsDefault ="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

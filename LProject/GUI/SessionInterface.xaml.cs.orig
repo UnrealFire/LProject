@@ -1,0 +1,687 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using System.Windows;
+using System.Windows.Controls;
+
+
+using Gecko;
+using System.Windows.Forms.Integration;
+
+using System.IO;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
+using Microsoft.Win32;
+
+using System.Collections.ObjectModel;
+using Newtonsoft.Json;
+using System.Drawing.Printing;
+
+namespace LProject
+{
+
+    public class newRoute
+    {
+        public string editRouteImage { get; set; }
+        public string hideElemImage { get; set; }
+        public string deleteElemImage { get; set; }
+
+        public int routeNumber { get; set; }
+        public string routeText { get; set; }
+        public string colorRoute { get; set; }
+        public string colorRouteStroke { get; set; }
+
+        public List<NewPoints> point1 { get; set; }
+        public List<NewPoints> point2 { get; set; }
+        public List<NewPoints> point3 { get; set; }
+        public List<NewPoints> point4 { get; set; }
+        public List<NewPoints> point5 { get; set; }
+
+        public List<NewPoints> GetAllPoints()
+        {
+            var allPoints = new List<NewPoints>(point1.Count +
+                                                point2.Count +
+                                                point3.Count +
+                                                point4.Count +
+                                                point5.Count);
+
+            allPoints.AddRange(point1);
+            allPoints.AddRange(point2);
+            allPoints.AddRange(point3);
+            allPoints.AddRange(point4);
+            allPoints.AddRange(point5);
+
+            return allPoints;
+        }
+
+        public Route GUIroute { get; set; }
+
+        public string RouteColor { get; set; }
+    }
+
+    public class NewPoints
+    {
+        public int pointNumber { get; set; }
+        public string pointText { get; set; }
+        public string Address { get; set; }
+        public int PointType { get; set; }
+        public int pointId { get; set; }
+        public string comments { get; set; }
+    }
+    
+    public partial class SessionInterface : Window
+    {
+        DBWork db;
+        GeckoWebBrowser browser;
+        int sessionId;
+        string URL = "file:///" + System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "index.html");
+
+
+        string address;
+        XSSFWorkbook wb;
+        XSSFSheet sh;
+
+        ObservableCollection<newRoute> Routes;
+        string city, street, house, korp, interval, order = "";
+
+
+        public SessionInterface(int ID)
+        {
+            
+            InitializeComponent();
+            
+
+            Unarchive.Visibility = Visibility.Hidden;
+
+            sessionId = ID;
+            db = new DBWork();
+
+            db.getPointBySession(sessionId);
+
+            InitializeMap();
+
+            setRoutes();
+
+        }
+
+
+        public SessionInterface(int ID, bool arch)
+        {
+
+            InitializeComponent();
+            Print.Visibility = Visibility.Hidden;
+            Import.Visibility = Visibility.Hidden;
+            Export.Visibility = Visibility.Hidden;
+            Add_route.Visibility = Visibility.Hidden;
+            Add_point.Visibility = Visibility.Hidden;
+            Archive.Visibility = Visibility.Hidden;
+            Unarchive.Visibility = Visibility.Visible;
+
+            sessionId = ID;
+            db = new DBWork();
+
+            db.getPointBySession(sessionId);
+
+
+            InitializeMap();
+
+        }
+
+        void InitializeMap()
+        {
+            Gecko.Xpcom.Initialize("Firefox");
+            WindowsFormsHost host = new WindowsFormsHost();
+            browser = new GeckoWebBrowser();
+            setRoutes();
+            browser.DocumentCompleted += (sender, e) => { DrawRoutesOnMap(); };
+
+            host.Child = browser;
+            GridWeb.Children.Add(host);
+            browser.Navigate(URL);
+
+            //System.Windows.Point position = GridWeb.PointToScreen(new System.Windows.Point(0, 0));
+            //double screenWidth = GridWeb.ActualWidth;
+            //double screenHeight = GridWeb.ActualHeight;
+
+        }
+
+        public void setRoutes()
+        {
+            db = new DBWork();
+            Routes = new ObservableCollection<newRoute> { };
+
+            var Data = db.getPointBySession(sessionId);
+            var sizeData = Data.Count;
+            string dataPoint = "";
+
+            var dbRoutes = db.GetRoutsBySession(sessionId);
+
+            foreach (var item in dbRoutes)
+            {
+                List<NewPoints> pointSet1 = new List<NewPoints>();
+                List<NewPoints> pointSet2 = new List<NewPoints>();
+                List<NewPoints> pointSet3 = new List<NewPoints>();          
+                List<NewPoints> pointSet4 = new List<NewPoints>();
+                List<NewPoints> pointSet5 = new List<NewPoints>();
+
+                for (var k = 0; k < sizeData; k++)
+                {
+                    var elem = Data[k];
+                    var city = elem.City;
+                    var street = elem.Street;
+                    var house = elem.House + "";
+                    var korp = elem.Korp + "";
+                    var interval = elem.Interval;
+
+                    var route = elem.ID_Route;
+                    var pointID = elem.ID_Point;
+                    var number = elem.PointNumber;
+
+                    var number = elem.PointNumber;
+
+                    if (route == item.ID_Route)
+                    {
+                        string streetAndHouse;
+                        if ((korp == "") || (korp == "0"))
+                        {
+                            streetAndHouse = "ул." + street + ", " + house;
+<<<<<<< HEAD
+                            dataPoint = "   #" + number + ": " + streetAndHouse;
+=======
+                            dataPoint = Convert.ToString(number) + ": " + streetAndHouse;
+>>>>>>> 6035a8ff5ca7677101daa1d3058666139eb8fd19
+                        }
+                        else
+                        {
+                            streetAndHouse = "ул. " + street + ", " + house + " к" + korp;
+<<<<<<< HEAD
+                            dataPoint = "   #" + number + ": " + streetAndHouse;
+=======
+                            dataPoint = Convert.ToString(number) + ": " + streetAndHouse;
+>>>>>>> 6035a8ff5ca7677101daa1d3058666139eb8fd19
+                        }
+
+                        var newPoint = new NewPoints {
+                            pointId = elem.ID_Point,
+                            pointText = dataPoint,
+                            PointType = elem.PointType,
+                            Address = city + ", " + streetAndHouse,
+                            comments = elem.Comment
+                        };
+                        switch (interval)
+                        {
+                            case ("с 9:00 до 12:00"):
+                                pointSet1.Add(newPoint);
+                                break;
+                            case ("с 12:00 до 15:00"):
+                                pointSet2.Add(newPoint);
+                                break;
+                            case ("с 15:00 до 18:00"):
+                                pointSet3.Add(newPoint);
+                                break;
+                            case ("с 18:00 до 21:00"):
+                                pointSet4.Add(newPoint);
+                                break;
+                            case ("с 9:00 до 21:00"):
+                                pointSet5.Add(newPoint);
+                                break;
+                        }
+                    }
+                }
+
+
+                if (item.RouteNumber == 0)
+                    Routes.Add(new newRoute
+                    {
+                        routeText = "Без маршрута",
+                        colorRoute = "white",
+                        colorRouteStroke = "white",
+                        point1 = pointSet1,
+                        point2 = pointSet2,
+                        point3 = pointSet3,
+                        point4 = pointSet4,
+                        point5 = pointSet5,
+                        GUIroute = item,
+                        RouteColor = item.Color
+                    });
+                else Routes.Add(new newRoute
+                {
+                    routeText = "Маршрут " + item.RouteNumber,
+                    colorRoute = "" + item.Color,
+                    colorRouteStroke = "black",
+                    point1 = pointSet1,
+                    point2 = pointSet2,
+                    point3 = pointSet3,
+                    point4 = pointSet4,
+                    point5 = pointSet5,
+                    GUIroute = item,
+                    RouteColor = item.Color
+                });
+
+            }
+            routesList.ItemsSource = Routes;
+        }
+
+        public void DrawRoutesOnMap()
+        {
+            var mapRoutes = Routes.Select(r =>
+            {
+                return new
+                {
+                    routeColor = r.RouteColor,
+                    points = r.GetAllPoints().Select(p =>
+                    {
+                        return new
+                        {
+                            id = p.pointId,
+                            address = p.Address,
+                            type = p.PointType
+                        };
+                    })
+                };
+            });
+
+            browser.AddMessageEventListener("clickPointEvent", (string p) =>
+            {
+                
+                int ID = Convert.ToInt32(p);
+                Point point = db.GetPointById(ID);
+                EditPoint edit = new EditPoint(point, sessionId);
+                edit.Show();
+                edit.DataChanged += UpdateAll;
+            });
+
+
+            string result;
+            using (AutoJSContext context = new AutoJSContext(browser.Window))
+            {
+                var json = JsonConvert.SerializeObject(mapRoutes);
+                var res = context.EvaluateScript("drawRoutes(" + json + ");", out result);
+            }
+
+        }
+
+    
+        public delegate void DataChangedEventHandler(object sender, EventArgs e);
+
+        public event DataChangedEventHandler DataChanged;
+
+        private void Archive_click(object sender, RoutedEventArgs e)
+        {
+            db.ArchiveSession(sessionId, true);
+            DataChangedEventHandler handler = DataChanged;
+
+            if (handler != null)
+            {
+                handler(this, new EventArgs());
+            }
+
+
+            Print.Visibility = Visibility.Hidden;
+            Import.Visibility = Visibility.Hidden;
+            Export.Visibility = Visibility.Hidden;
+            Add_route.Visibility = Visibility.Hidden;
+            Add_point.Visibility = Visibility.Hidden;
+            Archive.Visibility = Visibility.Hidden;
+            Unarchive.Visibility = Visibility.Visible;
+        }
+
+        private void Unarchive_click(object sender, RoutedEventArgs e)
+        {
+            db.ArchiveSession(sessionId, false);
+            DataChangedEventHandler handler = DataChanged;
+
+            if (handler != null)
+            {
+                handler(this, new EventArgs());
+            }
+
+
+            Print.Visibility = Visibility.Visible;
+            Import.Visibility = Visibility.Visible;
+            Export.Visibility = Visibility.Visible;
+            Add_route.Visibility = Visibility.Visible;
+            Add_point.Visibility = Visibility.Visible;
+            Archive.Visibility = Visibility.Visible;
+            Unarchive.Visibility = Visibility.Hidden;
+        }
+
+        private void Export_click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+            saveFileDialog1.InitialDirectory = @"C:\";
+            saveFileDialog1.Title = "Save File";
+
+            saveFileDialog1.DefaultExt = "xls";
+            saveFileDialog1.Filter = "Microsoft Excel (*.xls)|*.xls|All files (*.*)|*.*";
+            saveFileDialog1.FilterIndex = 2;
+            saveFileDialog1.RestoreDirectory = true;
+
+            saveFileDialog1.ShowDialog();
+            if (saveFileDialog1.FileName == "" )
+            {
+                return;
+            }
+            else
+            {
+                address = saveFileDialog1.FileName;
+            }
+
+            string[] top = { "Номер заказа", "Город", "Наименование Улицы", "Дом", "Корпус", "Код интервала" };
+
+            wb = new XSSFWorkbook();
+            sh = (XSSFSheet)wb.CreateSheet("Лист 1");
+
+            int countRow = 1;
+            int countColumn = 6;
+
+            //заголовок
+            for (int i = 0; i < countRow; i++)
+            {
+                var currentRow = sh.CreateRow(i);
+
+                for (int j = 0; j < countColumn; j++)
+                {
+                    var currentCell = currentRow.CreateCell(j);
+                    currentCell.SetCellValue(top[j]);
+                    sh.AutoSizeColumn(j);
+                }
+
+            }
+
+            //... data
+            var Data = db.getPointBySession(sessionId);
+            var sizeData = Data.Count;
+
+            for (var k=0;k<sizeData;k++)
+            {
+                var elem = Data[k];
+                var order = elem.OrderNumber;
+                var city = elem.City;
+                var street = elem.Street;
+                var house = elem.House;
+                var korp = elem.Korp;
+                var interval = elem.Interval;
+                string[] data = { order, city, street, house, korp, interval };
+
+                var currentRow = sh.CreateRow(k+1);
+                for (int j = 0; j < countColumn; j++)
+                {
+                    var currentCell = currentRow.CreateCell(j);
+                    currentCell.SetCellValue(data[j]);
+                    sh.AutoSizeColumn(j);
+                }
+            }
+
+
+            if (!File.Exists(address))
+            {
+                File.Delete(address);
+            }
+
+            using (var fs = new FileStream(address, FileMode.Create, FileAccess.Write))
+            {
+                wb.Write(fs);
+            }
+
+            //this.Close();
+        }
+
+
+        private void Import_click(object sender, RoutedEventArgs e)
+        {
+            bool hasRoutes = db.GetRoutsBySession(sessionId).Count != 0;
+            if (!hasRoutes)
+            {
+                db.InsertRoute(0, "#ff888888", sessionId);
+            }
+
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            openFileDialog1.InitialDirectory = @"C:\";
+            openFileDialog1.Title = "Open File";
+
+            openFileDialog1.CheckFileExists = true;
+            openFileDialog1.CheckPathExists = true;
+
+            openFileDialog1.DefaultExt = "xls";
+            openFileDialog1.Filter = "Microsoft Excel (*.xls)|*.xls|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.RestoreDirectory = true;
+
+            openFileDialog1.ShowDialog();
+            if (openFileDialog1.FileName == "")
+            {
+                return;
+            }
+            else
+            {
+                address = openFileDialog1.FileName;
+            }
+
+            using (FileStream file = new FileStream(address, FileMode.Open, FileAccess.Read))
+            {
+                wb = new XSSFWorkbook(file);
+            }
+
+            ISheet sheet = wb.GetSheetAt(0); //доделать проверку количества страниц 
+
+
+            //проверка заголовков
+            for (int row = 0; row < 1; row++)
+            {
+                var currentRow = sheet.GetRow(row);
+                if (currentRow != null)
+                {
+                    for (int column = 0; column < 6; column++)
+                    {
+                        var stringCellValue = currentRow.GetCell(column).StringCellValue;
+
+                        if ((column == 0) && (stringCellValue != "Номер заказа"))
+                        {
+                            MessageBox.Show("Некорректное заголовок 'Номер заказа' ", "Ошибка");
+                            return;
+                        }
+
+                        if ((column == 1) && (stringCellValue != "Город"))
+                        {
+                            MessageBox.Show("Некорректное заголовок 'Город' ","Ошибка");
+                            return;
+                        }
+
+                        if ((column == 2) && (stringCellValue != "Наименование Улицы"))
+                        {
+                            MessageBox.Show("Некорректное заголовок 'Наименование Улицы' ", "Ошибка");
+                            return;
+                        }
+
+                        if ((column == 3) && (stringCellValue != "Дом"))
+                        {
+                            MessageBox.Show("Некорректное заголовок 'Дом' ", "Ошибка");
+                            return;
+                        }
+
+                        if ((column == 4) && (stringCellValue != "Корпус"))
+                        {
+                            MessageBox.Show("Некорректное заголовок 'Корпус' ", "Ошибка");
+                            return;
+                        }
+
+                        if ((column == 5) && (stringCellValue != "Код интервала"))
+                        {
+                            MessageBox.Show("Некорректное заголовок 'Код интервала' ", "Ошибка");
+                            return;
+                        }
+
+                    }
+                }
+            }
+
+            //проверка типов элементов таблицы
+            for (int row = 1; row < sheet.LastRowNum; row++)
+            {
+                var currentRow = sheet.GetRow(row);
+                if (currentRow != null) 
+                {
+                    for (int column = 0; column < 6; column++)
+                    {
+                        var Value = currentRow.GetCell(column);
+                        
+                    }
+                }
+            }
+
+            for (var q = 1; q <= sheet.LastRowNum; q++)
+            {
+                var currentRow = sheet.GetRow(q);
+                if (currentRow != null)
+                {
+                    for (int column = 0; column < 6; column++)
+                    {
+                        var Value = Convert.ToString(currentRow.GetCell(column));
+                        switch (column)
+                        {
+                            case (0):
+                                order = Value;
+                                break;
+                            case (1):
+                                city = Value;
+                                break;
+                            case (2):
+                                street = Value;
+                                break;
+                            case (3):
+                                house = Value;
+                                break;
+                            case (4):
+                                korp = Value;
+                                break;
+                            case (5):
+                                interval = Value;
+                                break;
+                        }
+                    }
+                    
+                    db.InsertPoint(order, city, street, house, korp, interval, 1, q, sessionId, 0);
+                    
+                }
+            }
+
+            setRoutes();
+        }
+
+
+        private void AddPoint_click(object sender, RoutedEventArgs e)
+        {
+            bool hasRoutes = db.GetRoutsBySession(sessionId).Count != 0;
+            if (!hasRoutes)
+            {
+                db.InsertRoute(0, "#ff888888", sessionId);
+            }
+            NewPoint point = new NewPoint(this, sessionId);
+            point.Show();
+            point.DataChanged += UpdateAll;
+
+        }
+
+        public void UpdateAll(object sender, EventArgs e)
+        {
+            setRoutes();
+            InitializeMap();
+        }
+               
+        private void AddRoute_click(object sender, RoutedEventArgs e)
+        {
+            List<int> routeNumbers = new List<int>();
+            foreach (var r in Routes)
+                routeNumbers.Add(r.routeNumber);
+            NewRoute route = new NewRoute(sessionId, routeNumbers);
+            route.Show();
+            route.DataChanged += UpdateAll;
+        }
+
+        private void Print_click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Point position = GridPanel.PointToScreen(new System.Windows.Point(0, 0));
+            double screenWidth = GridPanel.ActualWidth;
+            double screenHeight = GridPanel.ActualHeight;
+            string path = System.IO.Path.Combine(Path.GetTempPath(), "print.png");
+            using (System.Drawing.Bitmap bmp = new System.Drawing.Bitmap((int)screenWidth,
+                (int)screenHeight))
+            {
+                using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp))
+                {
+                    String filename = "ScreenCapture-" + DateTime.Now.ToString("ddMMyyyy-hhmmss") + ".png";
+                    Opacity = .0;
+                    g.CopyFromScreen((int)position.X, (int)position.Y, 0, 0, bmp.Size);
+                    bmp.Save(path);
+                    Opacity = 1;
+                }
+
+            }
+
+            PrintDocument pd = new PrintDocument();
+            pd.PrintPage += (send, args) =>
+            {
+                System.Drawing.Image i = System.Drawing.Image.FromFile(path);
+                System.Windows.Point p = new System.Windows.Point(100, 100);
+                args.Graphics.DrawImage(i, args.MarginBounds);
+            };
+            pd.Print();
+        }
+
+        public void setPointMap(string point)
+        {
+            browser.Navigate(point);
+        }
+
+        private void EditRoute_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+
+            var routes = ((newRoute)(button.DataContext)).GUIroute;
+            if (routes.RouteNumber != 0)
+            {
+                ChangeRoute change = new ChangeRoute(routes);
+                change.Show();
+                setRoutes();
+                change.DataChanged += UpdateAll;
+                
+            }
+            
+        }
+
+        private void HideElem_Click(object sender, RoutedEventArgs e)
+        {
+            //Страшно. Очень страшно.
+            var button = (Button)sender;
+            var par = ((StackPanel)(button.Parent)).Parent;
+            Expander pare = (Expander)par;
+            pare.IsExpanded = false;
+
+            
+        }
+
+        private void DeleteElem_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+
+            var routes = ((newRoute)(button.DataContext)).GUIroute;
+            if (routes.RouteNumber != 0)
+            {
+                db.deleteRoute(routes.ID_Route);
+                setRoutes();
+
+                InitializeMap();
+            }
+        }
+
+        private void GridPanel_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+    }
+}

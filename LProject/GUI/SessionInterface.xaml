@@ -1,0 +1,290 @@
+﻿<Window x:Name="Интерфейс_сессии" x:Class="LProject.SessionInterface"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LProject"
+        mc:Ignorable="d"
+        Title="Сессия" WindowState="Maximized">
+
+
+
+    <Grid Name="GridPanel">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="15*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="4.5*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Content="Добавить маршрут" x:Name ="Add_route" Click="AddRoute_click" Height="23" Width="120" Margin="21,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" MinWidth="120" MinHeight="21"/>
+            <Button Content="Добавить точку" x:Name ="Add_point" Click="AddPoint_click" Height="23" Width="120" HorizontalContentAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="20,0,0,0" VerticalAlignment="Center" MinWidth="120" MinHeight="23"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="20,0,0,0">
+            <Button Content="Импорт" x:Name ="Import" Click="Import_click" Height="23" Width="70" Margin="0,0,5,0" MinWidth="70" MinHeight="23"/>
+            <Button Content="Экспорт" x:Name ="Export" Click="Export_click" Height="23" Width="70" Margin="0,0,5,0"  MinWidth="70" MinHeight="23"/>
+            <Button Content="Архивировать" x:Name ="Archive" Click="Archive_click" Height="23" Width="100" Margin="0,0,5,0"  MinWidth="100" MinHeight="23" />
+            <Button Content="Разархивировать" x:Name ="Unarchive" Click="Unarchive_click" Height="23" Width="100"  MinWidth="100" MinHeight="23" Margin="0,0,5,0" />
+        </StackPanel>
+
+        <ListView x:Name="routesList" Grid.Row="1" Grid.Column="0" Margin="30,0,0,0"  
+                          ScrollViewer.VerticalScrollBarVisibility="Visible"
+                          ScrollViewer.CanContentScroll="False">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Expander>
+                        <Expander.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Target="{Binding ElementName=txtName}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Canvas Background="White">
+                                            <Ellipse
+                                                          Canvas.Left="-7"
+                                                          Fill="{Binding colorRoute}"
+                                                          Height="15"
+                                                          Width="15"
+                                                          StrokeThickness="1"
+                                                          Stroke="{Binding colorRouteStroke}"/>
+                                        </Canvas>
+                                        <TextBlock Text="{Binding routeText}" Margin="10,0,0,0"/>
+                                    </StackPanel>
+                                </Label>
+                                <Button x:Name="EditRoute" Width="20" Height="20" Background="White" BorderBrush="White" Click="EditRoute_Click" Margin="0,0,2,0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <StackPanel>
+                                        <Image Source="../Resources/edit.png" />
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="HideElem" Width="20" Height="20" Background="White" BorderBrush="White" Click="HideElem_Click" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <StackPanel>
+                                        <Image Source="../Resources/hide.png"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="DeleteElem" Width="20" Height="20" Background="White" BorderBrush="White" Click="DeleteElem_Click" Margin="2,0,5,0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <StackPanel>
+                                        <Image Source="../Resources/del.png" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Expander.Header>
+                        <StackPanel Margin="10,0,0,0">
+                            <Expander IsExpanded="{Binding HideElem_Click, ElementName=HideElem, Mode=TwoWay}">
+                                <Expander.Header>
+                                    <StackPanel>
+                                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <Label Target="{Binding ElementName=txtName}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="с 9:00 до 12:00" />
+                                                </StackPanel>
+                                            </Label>
+                                        </Grid>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <Expander.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding point1.Count}" Value="0">
+                                                <Setter Property="FrameworkElement.Height" Value="0"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Expander.Style>
+                                <ListView x:Name="point1n" ItemsSource="{Binding point1}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="{Binding pointText}" />
+                                                <TextBlock Text="{Binding comments}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="pointClick" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                            </Expander>
+                            <Expander>
+                                <Expander.Header>
+                                    <StackPanel>
+                                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <Label Target="{Binding ElementName=txtName}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="с 12:00 до 15:00" />
+                                                </StackPanel>
+                                            </Label>
+                                        </Grid>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <Expander.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding point2.Count}" Value="0">
+                                                <Setter Property="FrameworkElement.Height" Value="0"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Expander.Style>
+                                <ListView x:Name="point2n" ItemsSource="{Binding point2}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding pointText }" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding comments}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="pointClick" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                            </Expander>
+                            <Expander>
+                                <Expander.Header>
+                                    <StackPanel>
+                                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <Label Target="{Binding ElementName=txtName}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="с 15:00 до 18:00" />
+                                                </StackPanel>
+                                            </Label>
+                                        </Grid>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <Expander.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding point3.Count}" Value="0">
+                                                <Setter Property="FrameworkElement.Height" Value="0"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Expander.Style>
+                                <ListView x:Name="point3n" ItemsSource="{Binding point3}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding pointText}" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding comments}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="pointClick" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                            </Expander>
+                            <Expander>
+                                <Expander.Header>
+                                    <StackPanel>
+                                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <Label Target="{Binding ElementName=txtName}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="с 18:00 до 21:00" />
+                                                </StackPanel>
+                                            </Label>
+                                        </Grid>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <Expander.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding point4.Count}" Value="0">
+                                                <Setter Property="FrameworkElement.Height" Value="0"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Expander.Style>
+                                <ListView x:Name="point4n" ItemsSource="{Binding point4}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding pointText}" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding comments}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="pointClick" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                            </Expander>
+                            <Expander>
+                                <Expander.Header>
+                                    <StackPanel>
+                                        <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <Label Target="{Binding ElementName=txtName}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="с 9:00 до 21:00" />
+                                                </StackPanel>
+                                            </Label>
+                                        </Grid>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <Expander.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding point5.Count}" Value="0">
+                                                <Setter Property="FrameworkElement.Height" Value="0"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Expander.Style>
+                                <ListView x:Name="point5n" ItemsSource="{Binding point5}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding pointText}" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding comments}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="pointClick" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                            </Expander>
+                        </StackPanel>
+                    </Expander>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="MouseDoubleClick" Handler="routeClick" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <Grid x:Name="GridWeb" Grid.Row="1" Grid.Column="2"></Grid>
+        <StackPanel Grid.Row="2" Grid.Column="2">
+            <ComboBox Height="25" Width="200" VerticalAlignment="Top" SelectionChanged="comboBox_Print_SelectionChanged" 
+                      Name="comboBox_Print"
+                      ItemsSource="{Binding ComboBoxRoutes_Colection}"
+                      >
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Button Content="Печать" x:Name ="Print" Click="Print_click" Height="23" Width="70" />
+        </StackPanel>
+        <Button Content="Сброс зума" Margin="6,10,4.5,26.5" Grid.Row="2" Click="ButtonReset_Click"/>
+    </Grid>
+</Window>
+
+

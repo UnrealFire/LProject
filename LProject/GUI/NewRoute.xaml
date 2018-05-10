@@ -1,0 +1,51 @@
+﻿<Window x:Class="LProject.NewRoute"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:LProject"
+        mc:Ignorable="d"
+        Title="Новый маршрут" Height="500" Width="500">
+    <Grid Margin="0,0,0, 5">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="273.762"/>
+            <ColumnDefinition Width="42.677"/>
+            <ColumnDefinition Width="28.323"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="0.515"/>
+            <ColumnDefinition Width="0.485"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Label Margin="26,29,176,230">Номер</Label>
+        <Label Margin="26,72,176,187">Цвет</Label>
+        <xctk:IntegerUpDown Name="RouteNumber" Margin="107,29,125,230" Value="1" Minimum="1"/>
+        <xctk:ColorCanvas Name="ColorCanvas1" Grid.ColumnSpan="13" Margin="89,84,-9,-75" 
+                          SelectedColorChanged="ColorCanvas1_SelectedColorChanged"/>
+        
+
+        <Button x:Name="Cancel" Content="Отмена"
+                    Click="CancelClick" Margin="26,102,125,-147" Grid.Row="9"/>
+        <Button x:Name="AddPoint" Content="Добавить"
+                    Click="AddPointClick" Margin="186,102,0,-147" HorizontalAlignment="Left" Width="79" Grid.Row="9"/>
+    </Grid>
+</Window>
