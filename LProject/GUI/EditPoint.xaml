@@ -6,7 +6,7 @@
           xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:LProject"
         mc:Ignorable="d"
-        Title="Изменение точки" Height="370" Width="380">
+        Title="Изменение точки" Height="370" Width="380" Deactivated="Window_Deactivated">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -32,336 +32,40 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Label Margin="26,20,200,132">Маршрут</Label>
-        <Label Margin="26,50,200,104">Интервал</Label>
-        <Label Margin="26,80,213,76">Номер</Label>
-        <Label Margin="26,110,213,48">Тип</Label>
+        <Label Margin="26,122,200,135">Маршрут</Label>
+        <Label Margin="26,146,200,107">Интервал</Label>
+        <Label Margin="26,175,213,84" Content="№ точки"/>
         <Label Margin="19,215,288,39">Комментарий</Label>
         <TextBox Name="Comment" Margin="110,214,83,8"></TextBox>
         <ComboBox
             Name ="Way"
             HorizontalAlignment="Left"
-            Margin="110,20,0,0"
+            Margin="110,124,0,0"
             VerticalAlignment="Top"
-            Width="171"
+            Width="190"
             Loaded="wayComboBox_Loaded"
             SelectionChanged="wayComboBox_SelectionChanged"/>
         <ComboBox
             Name ="Interval"
             HorizontalAlignment="Left"
-            Margin="110,50,0,0"
+            Margin="110,151,0,0"
             VerticalAlignment="Top"
-            Width="171"
+            Width="190"
             Loaded="intervalComboBox_Loaded"
             SelectionChanged="intervalComboBox_SelectionChanged"/>
-        <xctk:IntegerUpDown Name="wayNumber" Margin="110,83,192,176" Minimum="1"/>
+        <xctk:IntegerUpDown Name="wayNumber" Margin="219,178,83,81" Minimum="1"/>
         <Button x:Name="Delete" Content="Удалить" Click="Delete_Click" Width="100" Height="30" Margin="26,8,217,-37" Grid.Row="9"/>
         <Button x:Name="Save" Content="Сохранить" Click="Save_Click"  Width="100" Height="30"  Margin="192,10,0,-38" HorizontalAlignment="Left" Grid.Row="9"/>
-        <Border Height="auto" BorderBrush="Black" BorderThickness="1" CornerRadius="10,10,10,10" Margin="110,110,83,97"/>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,115,0,0">
-            <RadioButton Name="rb1" GroupName="actinact" VerticalAlignment="Center" Margin="5,0" Width="30" Height="30" Foreground="Blue">
-                <RadioButton.Style>
-                    <Style TargetType="{x:Type RadioButton}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="RadioButton">
-                                    <Grid>
-                                        <Border BorderThickness="2"
-                                            BorderBrush="White"
-                                            Background="Transparent"
-                                            CornerRadius="0">
-                                        </Border>
-                                        <Image Source="../Resources/1.png" Width="30" Height="30"/>
-                                        <ContentPresenter/>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter  Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.9"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </RadioButton.Style>
-            </RadioButton>
-            <RadioButton x:Name="rb2" GroupName="actinact" VerticalAlignment="Center" Margin="5,0" Width="30" Height="30" Foreground="Blue">
-                <RadioButton.Style>
-                    <Style TargetType="{x:Type RadioButton}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="RadioButton">
-                                    <Grid>
-                                        <Border BorderThickness="2"
-                                            BorderBrush="White"
-                                            Background="Transparent"
-                                            CornerRadius="0">
-                                        </Border>
-                                        <Image Source="../Resources/2.png" Width="30" Height="30"/>
-                                        <ContentPresenter/>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter  Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.9"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </RadioButton.Style>
-            </RadioButton>
-            <RadioButton Name="rb3" GroupName="actinact" VerticalAlignment="Center" Margin="5,0" Width="30" Height="30" Foreground="Blue">
-                <RadioButton.Style>
-                    <Style TargetType="{x:Type RadioButton}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="RadioButton">
-                                    <Grid>
-                                        <Border BorderThickness="2"
-                                            BorderBrush="White"
-                                            Background="Transparent"
-                                            CornerRadius="0">
-                                        </Border>
-                                        <Image Source="../Resources/3.png" Width="30" Height="30"/>
-                                        <ContentPresenter/>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter  Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.9"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </RadioButton.Style>
-            </RadioButton>
-            <RadioButton x:Name="rb4" GroupName="actinact" VerticalAlignment="Center" Margin="5,0" Width="30" Height="30" Foreground="Blue">
-                <RadioButton.Style>
-                    <Style TargetType="{x:Type RadioButton}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="RadioButton">
-                                    <Grid>
-                                        <Border BorderThickness="2"
-                                            BorderBrush="White"
-                                            Background="Transparent"
-                                            CornerRadius="0">
-                                        </Border>
-                                        <Image Source="../Resources/4.png" Width="30" Height="30"/>
-                                        <ContentPresenter/>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter  Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.9"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </RadioButton.Style>
-            </RadioButton>
-            <RadioButton Name="rb5" GroupName="actinact" VerticalAlignment="Center" Margin="5,0" Width="30" Height="30" Foreground="Blue">
-                <RadioButton.Style>
-                    <Style TargetType="{x:Type RadioButton}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="RadioButton">
-                                    <Grid>
-                                        <Border BorderThickness="2"
-                                            BorderBrush="White"
-                                            Background="Transparent"
-                                            CornerRadius="0">
-                                        </Border>
-                                        <Image Source="../Resources/5.png" Width="30" Height="30"/>
-                                        <ContentPresenter/>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter  Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.9"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </RadioButton.Style>
-            </RadioButton>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,145,0,0">
-            <RadioButton x:Name="rb6" GroupName="actinact" VerticalAlignment="Center" Margin="5,0" Width="30" Height="30" Foreground="Blue">
-                <RadioButton.Style>
-                    <Style TargetType="{x:Type RadioButton}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="RadioButton">
-                                    <Grid>
-                                        <Border BorderThickness="2"
-                                            BorderBrush="White"
-                                            Background="Transparent"
-                                            CornerRadius="0">
-                                        </Border>
-                                        <Image Source="../Resources/6.png" Width="30" Height="30"/>
-                                        <ContentPresenter/>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter  Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.9"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </RadioButton.Style>
-            </RadioButton>
-            <RadioButton Name="rb7" GroupName="actinact" VerticalAlignment="Center" Margin="5,0" Width="30" Height="30" Foreground="Blue">
-                <RadioButton.Style>
-                    <Style TargetType="{x:Type RadioButton}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="RadioButton">
-                                    <Grid>
-                                        <Border BorderThickness="2"
-                                            BorderBrush="White"
-                                            Background="Transparent"
-                                            CornerRadius="0">
-                                        </Border>
-                                        <Image Source="../Resources/7.png" Width="30" Height="30"/>
-                                        <ContentPresenter/>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter  Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.9"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </RadioButton.Style>
-            </RadioButton>
-            <RadioButton x:Name="rb8" GroupName="actinact" VerticalAlignment="Center" Margin="5,0" Width="30" Height="30" Foreground="Blue">
-                <RadioButton.Style>
-                    <Style TargetType="{x:Type RadioButton}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="RadioButton">
-                                    <Grid>
-                                        <Border BorderThickness="2"
-                                            BorderBrush="White"
-                                            Background="Transparent"
-                                            CornerRadius="0">
-                                        </Border>
-                                        <Image Source="../Resources/8.png" Width="30" Height="30"/>
-                                        <ContentPresenter/>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter  Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.9"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </RadioButton.Style>
-            </RadioButton>
-            <RadioButton Name="rb9" GroupName="actinact" VerticalAlignment="Center" Margin="5,0" Width="30" Height="30" Foreground="Blue">
-                <RadioButton.Style>
-                    <Style TargetType="{x:Type RadioButton}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="RadioButton">
-                                    <Grid>
-                                        <Border BorderThickness="2"
-                                            BorderBrush="White"
-                                            Background="Transparent"
-                                            CornerRadius="0">
-                                        </Border>
-                                        <Image Source="../Resources/9.png" Width="30" Height="30"/>
-                                        <ContentPresenter/>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter  Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.9"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </RadioButton.Style>
-            </RadioButton>
-            <RadioButton x:Name="rb10" GroupName="actinact" VerticalAlignment="Center" Margin="5,0" Width="30" Height="30" Foreground="Blue">
-                <RadioButton.Style>
-                    <Style TargetType="{x:Type RadioButton}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="RadioButton">
-                                    <Grid>
-                                        <Border BorderThickness="2"
-                                            BorderBrush="White"
-                                            Background="Transparent"
-                                            CornerRadius="0">
-                                        </Border>
-                                        <Image Source="../Resources/10.png" Width="30" Height="30"/>
-                                        <ContentPresenter/>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter  Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect ShadowDepth="0" Color="Black" Opacity="0.9"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </RadioButton.Style>
-            </RadioButton>
-        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,115,0,0"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,145,0,0"/>
+        <Label Margin="26,10,200,249" Content="Улица"/>
+        <TextBox x:Name="tB_Addr_street" HorizontalAlignment="Left" Height="23" Margin="110,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
+        <Label Margin="26,38,200,221" Content="Дом"/>
+        <TextBox x:Name="tB_Addr_house" HorizontalAlignment="Left" Height="23" Margin="110,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
+        <Label Margin="26,66,200,183" Content="Корпус"/>
+        <TextBox x:Name="tB_Addr_korp" HorizontalAlignment="Left" Height="23" Margin="110,66,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
+        <Label Margin="26,94,200,165" Content="№ заказа"/>
+        <TextBox x:Name="tB_order" HorizontalAlignment="Left" Height="23" Margin="110,94,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
     </Grid>
 </Window>
 

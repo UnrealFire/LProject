@@ -116,6 +116,7 @@ namespace LProject
 
 
         string city, street, house, korp, interval, order = "";
+        string[] boundsStrArray = new string[4];
 
 
 
@@ -151,6 +152,14 @@ namespace LProject
 
         void InitializeMap()
         {
+            try
+            {
+                browser.Stop();
+                browser.Dispose();
+                browser = null;
+            }
+            catch
+            { }
             Gecko.Xpcom.Initialize("Firefox");
             WindowsFormsHost host = new WindowsFormsHost();
             browser = new GeckoWebBrowser();
@@ -159,6 +168,7 @@ namespace LProject
             browser.ConsoleMessage += (object sender, ConsoleMessageEventArgs e) => Console.WriteLine(e.Message);
 
             host.Child = browser;
+            GridWeb.Children.Clear();
             GridWeb.Children.Add(host);
             browser.Navigate(URL);
 
@@ -421,6 +431,8 @@ namespace LProject
 
         public void DrawRoutesOnMap()
         {
+            //Xpcom.GetService<nsIMemory>("@mozilla.org/xpcom/memory-service;1").HeapMinimize(true);
+
             var mapRoutes = Routes.Select(r =>
             {
                 return new
@@ -440,6 +452,16 @@ namespace LProject
                 };
             });
 
+            
+
+            browser.AddMessageEventListener("centerChange", (string p) =>
+            {
+                boundsStrArray = p.Split(';');
+                //for (int i = 0; i < 4; i++)
+                //{
+                //    bounds[i] = Convert.ToDouble(boundsStrArray[i]);
+                //}                
+            });
 
             //string result;
             browser.AddMessageEventListener("clickPointEvent", (string p) =>
@@ -454,6 +476,13 @@ namespace LProject
             var json = JsonConvert.SerializeObject(mapRoutes);
             var routes = browser.Document.GetElementById("routes");
             routes.SetAttribute("data-routes", json);
+
+            var bounds_div = browser.Document.GetElementById("bounds_div");
+            bounds_div.SetAttribute("left-x", boundsStrArray[0]);
+            bounds_div.SetAttribute("left-y", boundsStrArray[1]);
+            bounds_div.SetAttribute("right-x", boundsStrArray[2]);
+            bounds_div.SetAttribute("right-y", boundsStrArray[3]);
+
             var draw = browser.Document.GetElementById("draw_routes").DomObject;
             var drawButton = new GeckoInputElement(draw);
             drawButton.Click();
@@ -962,7 +991,7 @@ namespace LProject
             {
                 foreach (var point in routeOut.point1)
                 {
-                    ph = new Phrase(" - " + point.pointText + "Комм: " + point.comments,  fgFont);
+                    ph = new Phrase(" - " + point.pointText + "; Комм: " + point.comments,  fgFont);
                     doc.Add(ph);
                     doc.Add(new Paragraph(" "));
                 }
@@ -981,7 +1010,7 @@ namespace LProject
             {
                 foreach (var point in routeOut.point2)
                 {
-                    ph = new Phrase(" - " + point.pointText + "Комм: " + point.comments, fgFont);
+                    ph = new Phrase(" - " + point.pointText + "; Комм: " + point.comments, fgFont);
                     doc.Add(ph);
                     doc.Add(new Paragraph(" "));
 
@@ -1001,7 +1030,7 @@ namespace LProject
             {
                 foreach (var point in routeOut.point3)
                 {
-                    ph = new Phrase(" - " + point.pointText + "Комм: " + point.comments, fgFont);
+                    ph = new Phrase(" - " + point.pointText + "; Комм: " + point.comments, fgFont);
                     doc.Add(ph);
                     doc.Add(new Paragraph(" "));
                 }
@@ -1020,7 +1049,7 @@ namespace LProject
             {
                 foreach (var point in routeOut.point4)
                 {
-                    ph = new Phrase(" - " + point.pointText + "Комм: " + point.comments, fgFont);
+                    ph = new Phrase(" - " + point.pointText + "; Комм: " + point.comments, fgFont);
                     doc.Add(ph);
                     doc.Add(new Paragraph(" "));
                 }
@@ -1039,7 +1068,7 @@ namespace LProject
             {
                 foreach (var point in routeOut.point5)
                 {
-                    ph = new Phrase(" - " + point.pointText + "Комм: " + point.comments, fgFont);
+                    ph = new Phrase(" - " + point.pointText + "; Комм: " + point.comments, fgFont);
                     doc.Add(ph);
                     doc.Add(new Paragraph(" "));
                 }
@@ -1090,7 +1119,7 @@ namespace LProject
             {
                 foreach (var point in routeOut.point1)
                 {
-                    ph = new Phrase(" - " + point.pointText, fgFont);
+                    ph = new Phrase(" - " + point.pointText + "; Комм: " + point.comments, fgFont);
                     doc.Add(ph);
                     doc.Add(new Paragraph(" "));
                 }
@@ -1109,7 +1138,7 @@ namespace LProject
             {
                 foreach (var point in routeOut.point2)
                 {
-                    ph = new Phrase(" - " + point.pointText, fgFont);
+                    ph = new Phrase(" - " + point.pointText + "; Комм: " + point.comments, fgFont);
                     doc.Add(ph);
                     doc.Add(new Paragraph(" "));
 
@@ -1129,7 +1158,7 @@ namespace LProject
             {
                 foreach (var point in routeOut.point3)
                 {
-                    ph = new Phrase(" - " + point.pointText, fgFont);
+                    ph = new Phrase(" - " + point.pointText + "; Комм: " + point.comments, fgFont);
                     doc.Add(ph);
                     doc.Add(new Paragraph(" "));
                 }
@@ -1148,7 +1177,7 @@ namespace LProject
             {
                 foreach (var point in routeOut.point4)
                 {
-                    ph = new Phrase(" - " + point.pointText, fgFont);
+                    ph = new Phrase(" - " + point.pointText + "; Комм: " + point.comments, fgFont);
                     doc.Add(ph);
                     doc.Add(new Paragraph(" "));
                 }
@@ -1167,7 +1196,7 @@ namespace LProject
             {
                 foreach (var point in routeOut.point5)
                 {
-                    ph = new Phrase(" - " + point.pointText, fgFont);
+                    ph = new Phrase(" - " + point.pointText + "; Комм: " + point.comments, fgFont);
                     doc.Add(ph);
                     doc.Add(new Paragraph(" "));
                 }
@@ -1212,11 +1241,28 @@ namespace LProject
                     Convert.ToUInt32(browser.Height));
 
                 ////Т.к. скриншот снимается в 4хкратном размере (причина неизвестна) то обрезаем лишнее пространство полотна
-                //System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle(0, 0, bmp.Width / 2, bmp.Height / 2);
-                //var bmp2 = bmp.Clone(rectangle, bmp.PixelFormat);
+                System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle();
+                try
+                {
+                    switch (Properties.Settings.Default.printRes)
+                    {
+                        case "1x":
+                            rectangle = new System.Drawing.Rectangle(0, 0, bmp.Width / 1, bmp.Height / 1);
+                            break;
+                        case "2x":
+                            rectangle = new System.Drawing.Rectangle(0, 0, bmp.Width / 2, bmp.Height / 2);
+                            break;
+                    }
+                }
+                catch
+                {
+                    rectangle = new System.Drawing.Rectangle(0, 0, bmp.Width / 2, bmp.Height / 2);
+                }
 
-                //bmp2.Save(path);
-                bmp.Save(path);
+                var bmp2 = bmp.Clone(rectangle, bmp.PixelFormat);
+
+                bmp2.Save(path);
+                //bmp.Save(path);
 
 
                 DateTime fileCreationDatetime = DateTime.Now;
@@ -1342,6 +1388,13 @@ namespace LProject
 
                 InitializeMap();
             }
+        }
+
+        private void Интерфейс_сессии_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            browser.Stop();
+            browser.Dispose();
+            browser = null;
         }
 
         private void GridPanel_Loaded(object sender, RoutedEventArgs e)

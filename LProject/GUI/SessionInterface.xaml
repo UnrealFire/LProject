@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LProject"
         mc:Ignorable="d"
-        Title="Сессия" WindowState="Maximized">
+        Title="Сессия" WindowState="Maximized" Closing="Интерфейс_сессии_Closing">
 
 
 

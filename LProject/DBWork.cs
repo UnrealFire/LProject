@@ -38,6 +38,13 @@ namespace LProject
                 using (StreamReader sr = new StreamReader(path))
                 {
                     name = sr.ReadLine();
+                    try
+                    {
+                        Properties.Settings.Default.printRes = sr.ReadLine();
+                    }
+                    catch
+                    { }
+                    
                 }
             }
             catch (Exception ex)
@@ -448,7 +455,7 @@ namespace LProject
         }
 
 
-        public void ChangePoint(int id, int route, string interval, int number, int type, int sesId, string comment)
+        public void ChangePoint(int id, int route, string interval, int number, int type, int sesId, string comment, string addr_street, string addr_house, string addr_korp, string order)
         {
             Table<Point> point = db.GetTable<Point>();
             Table<Route> rt = db.GetTable<Route>();
@@ -469,6 +476,11 @@ namespace LProject
             query.PointNumber = number;
             query.PointType = type;
             query.Comment = comment;
+            query.Street = addr_street;
+            query.House = addr_house;
+            query.Korp = addr_korp;
+            query.OrderNumber = order;
+            
 
             db.SubmitChanges();
         }

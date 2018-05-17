@@ -24,6 +24,10 @@ namespace LProject
 
         int wayVal;
         string interVal;
+        string addr_street;
+        string addr_house;
+        string addr_korp;
+        string order;
         int pointType;
         int pointNumber;
 
@@ -39,8 +43,18 @@ namespace LProject
 
             InitializeComponent();
 
+            addr_street = point.Street;
+            addr_house = point.House;
+            addr_korp = point.Korp;
+            order = point.OrderNumber;
+
+
             Comment.Text = point.Comment;
             wayNumber.Value = point.PointNumber;
+            tB_Addr_street.Text = addr_street;
+            tB_Addr_house.Text = addr_house;
+            tB_Addr_korp.Text = addr_korp;
+            tB_order.Text = order;
         }
         public delegate void DataChangedEventHandler(object sender, EventArgs e);
 
@@ -56,10 +70,19 @@ namespace LProject
             var number = pointNumber;
             string comment = Comment.Text;
 
-            pointType = point.PointType;
-            choosePoint();
+            addr_street = tB_Addr_street.Text;
+            addr_house = tB_Addr_house.Text;
+            addr_korp = tB_Addr_korp.Text;
+            order = tB_order.Text;
 
-            db.ChangePoint(point.ID_Point, route, interval, number, pointType, sessionID, comment);
+            if ((addr_street == "") || (addr_house == "") || (order == ""))
+                MessageBox.Show("Введите улицу/дом/номер заказа");
+                
+
+            pointType = point.PointType;
+            //choosePoint();
+
+            db.ChangePoint(point.ID_Point, route, interval, number, pointType, sessionID, comment, addr_street, addr_house,addr_korp, order);
 
             DataChangedEventHandler handler = DataChanged;
 
@@ -155,50 +178,62 @@ namespace LProject
             this.Close();
         }
 
-        public void choosePoint()
-        {
-            if (rb1.IsChecked == true)
-            {
-                pointType = 1;
-            }
-            else if (rb2.IsChecked == true)
-            {
-                pointType = 2;
-            }
-            else if (rb3.IsChecked == true)
-            {
-                pointType = 3;
-            }
-            else if (rb4.IsChecked == true)
-            {
-                pointType = 4;
-            }
-            else if (rb5.IsChecked == true)
-            {
-                pointType = 5;
-            }
-            else if (rb6.IsChecked == true)
-            {
-                pointType = 6;
-            }
-            else if (rb7.IsChecked == true)
-            {
-                pointType = 7;
-            }
-            else if (rb8.IsChecked == true)
-            {
-                pointType = 8;
-            }
-            else if (rb9.IsChecked == true)
-            {
-                pointType = 9;
-            }
-            else if (rb10.IsChecked == true)
-            {
-                pointType = 10;
-            }
+        
 
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            try
+            {
+                Close();
+            }
+            catch
+            { }
         }
+
+        //public void choosePoint()
+        //{
+        //    if (rb1.IsChecked == true)
+        //    {
+        //        pointType = 1;
+        //    }
+        //    else if (rb2.IsChecked == true)
+        //    {
+        //        pointType = 2;
+        //    }
+        //    else if (rb3.IsChecked == true)
+        //    {
+        //        pointType = 3;
+        //    }
+        //    else if (rb4.IsChecked == true)
+        //    {
+        //        pointType = 4;
+        //    }
+        //    else if (rb5.IsChecked == true)
+        //    {
+        //        pointType = 5;
+        //    }
+        //    else if (rb6.IsChecked == true)
+        //    {
+        //        pointType = 6;
+        //    }
+        //    else if (rb7.IsChecked == true)
+        //    {
+        //        pointType = 7;
+        //    }
+        //    else if (rb8.IsChecked == true)
+        //    {
+        //        pointType = 8;
+        //    }
+        //    else if (rb9.IsChecked == true)
+        //    {
+        //        pointType = 9;
+        //    }
+        //    else if (rb10.IsChecked == true)
+        //    {
+        //        pointType = 10;
+        //    }
+
+        //}
 
     }
        

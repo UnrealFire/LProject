@@ -43,5 +43,17 @@ namespace LProject.Properties {
                 return ((string)(this["LProjectConnectionString2"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string printRes {
+            get {
+                return ((string)(this["printRes"]));
+            }
+            set {
+                this["printRes"] = value;
+            }
+        }
     }
 }
