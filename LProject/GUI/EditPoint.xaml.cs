@@ -28,8 +28,7 @@ namespace LProject
         string addr_house;
         string addr_korp;
         string order;
-        int pointType;
-        int pointNumber;
+        int pointRN;
 
         Point point;
         int sessionID;
@@ -47,10 +46,11 @@ namespace LProject
             addr_house = point.House;
             addr_korp = point.Korp;
             order = point.OrderNumber;
+            pointRN = point.PointType;
 
 
-            Comment.Text = point.Comment;
-            wayNumber.Value = point.PointNumber;
+            Comment.Text = point.Comment; 
+            wayNumber.Value = point.PointType;
             tB_Addr_street.Text = addr_street;
             tB_Addr_house.Text = addr_house;
             tB_Addr_korp.Text = addr_korp;
@@ -62,12 +62,10 @@ namespace LProject
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            pointNumber = (int)wayNumber.Value;
-            if (pointNumber < db.FindLastPoint(wayVal + 1, interVal) + 1)
-                db.Shift(wayVal + 1, interVal, pointNumber);
+            
             var route = wayVal;
             var interval = interVal;
-            var number = pointNumber;
+            var number = 0; //заглушка?
             string comment = Comment.Text;
 
             addr_street = tB_Addr_street.Text;
@@ -77,12 +75,27 @@ namespace LProject
 
             if ((addr_street == "") || (addr_house == "") || (order == ""))
                 MessageBox.Show("Введите улицу/дом/номер заказа");
-                
 
-            pointType = point.PointType;
-            //choosePoint();
+            //Если номер точки изменился используем метод перестроения ряда
+            if (wayNumber.Value != pointRN & wayNumber.Value > 0)
+            {
+                try
+                {
+                    //Вызов метода сдвига точек при изменении номера
+                    pointRN = GUI.PointRN.NumberMove((int)wayNumber.Value, pointRN, db.GetRoutsBySession(sessionID), db.getPointBySession(sessionID), wayVal);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Неверный ввод номера точки в маршруте");
+                    return;
+                }
+            }
 
-            db.ChangePoint(point.ID_Point, route, interval, number, pointType, sessionID, comment, addr_street, addr_house,addr_korp, order);
+
+            db.ChangePoint(point.ID_Point, route, interval, number, pointRN, sessionID, comment, addr_street, addr_house,addr_korp, order);
+            GUI.PointRN.SpaceChecking(db.GetRoutsBySession(sessionID), db.getPointBySession(sessionID), wayVal);
+            var Data = db.getPointBySession(sessionID);
+            db.ChangePoint(point.ID_Point, route, interval, number, pointRN, sessionID, comment, addr_street, addr_house, addr_korp, order);
 
             DataChangedEventHandler handler = DataChanged;
 
@@ -117,7 +130,7 @@ namespace LProject
 
             //int value = (int)comboBox.SelectedItem;
             wayVal = (int)comboBox.SelectedItem;
-            wayNumber.Value = db.FindLastPoint(wayVal + 1, interVal) + 1;
+            //wayNumber.Value = db.FindLastPoint(wayVal + 1, interVal) + 1;
         }
 
         private void intervalComboBox_Loaded(object sender, RoutedEventArgs e)
@@ -160,12 +173,13 @@ namespace LProject
             var comboBox = sender as ComboBox;
 
             interVal = comboBox.SelectedItem as string;
-            wayNumber.Value = db.FindLastPoint(wayVal + 1, interVal) + 1;
+            //wayNumber.Value = db.FindLastPoint(wayVal + 1, interVal) + 1;
         }
 
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
+            GUI.PointRN.DeleteNumber(point.PointType, db.GetRoutsBySession(sessionID), db.getPointBySession(sessionID), wayVal);
             db.deletePoint(point.ID_Point);
 
             DataChangedEventHandler handler = DataChanged;
@@ -190,50 +204,7 @@ namespace LProject
             { }
         }
 
-        //public void choosePoint()
-        //{
-        //    if (rb1.IsChecked == true)
-        //    {
-        //        pointType = 1;
-        //    }
-        //    else if (rb2.IsChecked == true)
-        //    {
-        //        pointType = 2;
-        //    }
-        //    else if (rb3.IsChecked == true)
-        //    {
-        //        pointType = 3;
-        //    }
-        //    else if (rb4.IsChecked == true)
-        //    {
-        //        pointType = 4;
-        //    }
-        //    else if (rb5.IsChecked == true)
-        //    {
-        //        pointType = 5;
-        //    }
-        //    else if (rb6.IsChecked == true)
-        //    {
-        //        pointType = 6;
-        //    }
-        //    else if (rb7.IsChecked == true)
-        //    {
-        //        pointType = 7;
-        //    }
-        //    else if (rb8.IsChecked == true)
-        //    {
-        //        pointType = 8;
-        //    }
-        //    else if (rb9.IsChecked == true)
-        //    {
-        //        pointType = 9;
-        //    }
-        //    else if (rb10.IsChecked == true)
-        //    {
-        //        pointType = 10;
-        //    }
-
-        //}
+        
 
     }
        

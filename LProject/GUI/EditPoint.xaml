@@ -54,6 +54,7 @@
             Loaded="intervalComboBox_Loaded"
             SelectionChanged="intervalComboBox_SelectionChanged"/>
         <xctk:IntegerUpDown Name="wayNumber" Margin="219,178,83,81" Minimum="1"/>
+        
         <Button x:Name="Delete" Content="Удалить" Click="Delete_Click" Width="100" Height="30" Margin="26,8,217,-37" Grid.Row="9"/>
         <Button x:Name="Save" Content="Сохранить" Click="Save_Click"  Width="100" Height="30"  Margin="192,10,0,-38" HorizontalAlignment="Left" Grid.Row="9"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="110,115,0,0"/>

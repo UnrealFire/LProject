@@ -172,6 +172,9 @@
     <Compile Include="GUI\ChangeRoute.xaml.cs">
       <DependentUpon>ChangeRoute.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GUI\ChangesPg.xaml.cs">
+      <DependentUpon>ChangesPg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GUI\ChangeUser.xaml.cs">
       <DependentUpon>ChangeUser.xaml</DependentUpon>
     </Compile>
@@ -187,6 +190,7 @@
     <Compile Include="GUI\GetDBName.xaml.cs">
       <DependentUpon>GetDBName.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GUI\Import.cs" />
     <Compile Include="GUI\NewPoint.xaml.cs">
       <DependentUpon>NewPoint.xaml</DependentUpon>
     </Compile>
@@ -196,6 +200,7 @@
     <Compile Include="GUI\CreateSession.xaml.cs">
       <DependentUpon>CreateSession.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GUI\PointRN.cs" />
     <Compile Include="GUI\PrintRoute.xaml.cs">
       <DependentUpon>PrintRoute.xaml</DependentUpon>
     </Compile>
@@ -221,6 +226,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="GUI\ChangeRoute.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GUI\ChangesPg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

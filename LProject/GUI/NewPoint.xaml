@@ -77,7 +77,10 @@
                 SelectionChanged="intervalComboBox_SelectionChanged"/>
         </StackPanel>
         <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
-            <xctk:IntegerUpDown Name="wayNumber" Margin="8,0,0,0" Height="19" Value="1" Minimum="1"/>
+            <xctk:IntegerUpDown Value="0" Name="wayNumber" Margin="8,0,0,0" Height="19" Minimum="1"/>
+            <TextBlock FontSize="7" Width="188">
+                Для автоматического выставления номера введите 0
+            </TextBlock>
         </StackPanel>
 
         <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">

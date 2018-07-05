@@ -20,13 +20,13 @@ namespace LProject.GUI
     /// </summary>
     public partial class ErrorList : Window
     {
-        private ObservableCollection<ErrorPoint> errPointsCollection;
+        private ObservableCollection<Point> errPointsCollection;
 
-        public ErrorList(List<ErrorPoint> errorPoints)
+        public ErrorList(List<Point> errorPoints)
         {
             InitializeComponent();
 
-            errPointsCollection = new ObservableCollection<ErrorPoint>(errorPoints);
+            errPointsCollection = new ObservableCollection<Point>(errorPoints);
 
             LbErrorPoints.ItemsSource = errPointsCollection;
 
@@ -71,8 +71,8 @@ namespace LProject.GUI
                 try
                 {
                     var selPoint = LbErrorPoints.SelectedItem;
-                    SessionInterface._errorPoints.Add((ErrorPoint)selPoint);
-                    errPointsCollection.Remove((ErrorPoint)selPoint);
+                    SessionInterface._errorPoints.Add((Point)selPoint);
+                    errPointsCollection.Remove((Point)selPoint);
                 }
                 catch (Exception ex)
                 {

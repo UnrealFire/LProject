@@ -45,6 +45,34 @@ namespace LProject
         public string ID_Route { get; set; }
     }
 
+    public class DelPoint
+    {
+        public string OrderNumber { get; set; }
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string House { get; set; }
+        public string Korp { get; set; }
+        public string Interval { get; set; }
+        public string PointNumber { get; set; }
+        public string PointType { get; set; }
+        public string ID_Session { get; set; }
+        public string ID_Route { get; set; }
+    }
+
+    public class ExistPoint
+    {
+        public string OrderNumber { get; set; }
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string House { get; set; }
+        public string Korp { get; set; }
+        public string Interval { get; set; }
+        public string PointNumber { get; set; }
+        public string PointType { get; set; }
+        public string ID_Session { get; set; }
+        public string ID_Route { get; set; }
+    }
+
     public class newRoute
     {
         public string editRouteImage { get; set; }
@@ -104,7 +132,7 @@ namespace LProject
         int sessionId;
         string URL = "file:///" + System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "index.html");
 
-        public static List<ErrorPoint> _errorPoints { get; set; } = new List<ErrorPoint>() { };
+
 
 
         string address;
@@ -359,17 +387,21 @@ namespace LProject
                                 {
                                     //ID точки
                                     pointId = elem.ID_Point,
+                                    //Номер точки в маршруте
+                                    NumInInterval = elem.PointType,
                                     //Текст точки (номер + адрес)
-                                    pointText = ": " + elem.OrderNumber + " " + address,
+                                    pointText = elem.PointType + ": " + elem.OrderNumber + " " + address,
                                     //Тип(?) точки
                                     Order = elem.OrderNumber,
                                     //Адрес (город + адерс)
                                     Address = elem.City + ", " + address,
                                     //Комментарий
                                     comments = elem.Comment,
+                                    
                                     //Интервал
                                     PointInterval = interval
-                                    
+
+
                                 });
                             }
 
@@ -379,16 +411,16 @@ namespace LProject
                     }
                 }
 
-                foreach (var interval in intervals)
-                {
-                    var numInInterval = 0;
-                    foreach (var point in interval.Value)
-                    {
-                        numInInterval++;
-                        point.pointText = point.pointText.Insert(0, Convert.ToString(numInInterval));
-                        point.NumInInterval = numInInterval;
-                    }
-                }
+                //foreach (var interval in intervals)
+                //{
+                //    var numInInterval = 0;
+                //    foreach (var point in interval.Value)
+                //    {
+                //        numInInterval++;
+                //        point.pointText = point.pointText.Insert(0, Convert.ToString(numInInterval));
+                //        point.NumInInterval = numInInterval;
+                //    }
+                //}
 
                 Routes.Add(new newRoute
                 {
@@ -454,7 +486,7 @@ namespace LProject
                 };
             });
 
-            
+
 
             browser.AddMessageEventListener("centerChange", (string p) =>
             {
@@ -626,10 +658,437 @@ namespace LProject
             //this.Close();
         }
 
+        List<Point> errorList = new List<Point>() { };
+        //List<Point> updateList = new List<Point>() { };
+        Dictionary<Point, int> updateDic = new Dictionary<Point, int>() { };
+        List<Point> newList = new List<Point>() { };
+        List<Point> deleteList = new List<Point>() { };
+        List<Point> verifdData = new List<Point>() { };
+
+        public static List<Point> _errorPoints { get; set; } = new List<Point>() { };
+        //public static List<Point> _updatePoints { get; set; } = new List<Point>() { };
+        public static Dictionary<Point, int> _updateDic { get; set; } = new Dictionary<Point, int>() { };
+        public static List<Point> _newPoints { get; set; } = new List<Point>() { };
+        public static List<Point> _delPoints { get; set; } = new List<Point>() { };
+
+        private void Refresh_click(object sender, RoutedEventArgs e)
+        {
+            
+
+            #region base_import
+            bool hasRoutes = db.GetRoutsBySession(sessionId).Count != 0;
+            if (!hasRoutes)
+            {
+                db.InsertRoute(0, "#ff888888", sessionId);
+            }
+
+            //Проверка на наличие в базе точек
+            db = new DBWork();
+            //получение точек из бд
+            var Data = db.getPointBySession(sessionId);
+            if (Data.Count > 0)
+                firstImport = false;
+            else
+                firstImport = true;
+
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            openFileDialog1.InitialDirectory = @"C:\";
+            openFileDialog1.Title = "Open File";
+
+            openFileDialog1.CheckFileExists = true;
+            openFileDialog1.CheckPathExists = true;
+
+            openFileDialog1.DefaultExt = "xls";
+            openFileDialog1.Filter = "Microsoft Excel (*.xls)|*.xls|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.RestoreDirectory = true;
+
+            openFileDialog1.ShowDialog();
+            if (openFileDialog1.FileName == "")
+            {
+                return;
+            }
+            else
+            {
+                address = openFileDialog1.FileName;
+            }
+
+            try
+            {
+                using (FileStream file = new FileStream(address, FileMode.Open, FileAccess.Read))
+                {
+                    wb = new XSSFWorkbook(file);
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Файл используется другим процессом или недоступен");
+                return;
+            }
+
+
+            ISheet sheet = wb.GetSheetAt(0); //доделать проверку количества страниц 
+
+
+            //проверка заголовков
+            for (int row = 0; row < 1; row++)
+            {
+                var currentRow = sheet.GetRow(row);
+                if (currentRow != null)
+                {
+                    for (int column = 0; column < 6; column++)
+                    {
+                        var stringCellValue = currentRow.GetCell(column).StringCellValue;
+
+                        if ((column == 0) && (stringCellValue != "Интернет-заказ"))
+                        {
+                            MessageBox.Show("Некорректное заголовок 'Интернет-заказ' ", "Ошибка");
+                            return;
+                        }
+
+                        if ((column == 1) && (stringCellValue != "Город"))
+                        {
+                            MessageBox.Show("Некорректное заголовок 'Город' ", "Ошибка");
+                            return;
+                        }
+
+                        if ((column == 2) && (stringCellValue != "Наименование улицы"))
+                        {
+                            MessageBox.Show("Некорректное заголовок 'Наименование улицы' ", "Ошибка");
+                            return;
+                        }
+
+                        if ((column == 3) && (stringCellValue != "Дом"))
+                        {
+                            MessageBox.Show("Некорректное заголовок 'Дом' ", "Ошибка");
+                            return;
+                        }
+
+                        if ((column == 4) && (stringCellValue != "Корпус"))
+                        {
+                            MessageBox.Show("Некорректное заголовок 'Корпус' ", "Ошибка");
+                            return;
+                        }
+
+                        if ((column == 5) && (stringCellValue != "Интервал доставки"))
+                        {
+                            MessageBox.Show("Некорректное заголовок 'Интервал доставки' ", "Ошибка");
+                            return;
+                        }
+
+                    }
+                }
+            }
+
+            //проверка типов элементов таблицы
+            for (int row = 1; row < sheet.LastRowNum; row++)
+            {
+                var currentRow = sheet.GetRow(row);
+                if (currentRow != null)
+                {
+                    for (int column = 0; column < 6; column++)
+                    {
+                        var Value = currentRow.GetCell(column);
+
+                    }
+                }
+            }
+            #endregion
+
+            //Проверяем данные
+            SheetVerif(sheet);
+
+            var vData = verifdData;
+            
+
+            
+            for (var q = 0; q < vData.Count; q++)
+            {
+                var currPoint = vData[q];
+                var newP = true;
+                //сравниваем по заказу
+                foreach (var point in Data)
+                {
+                    //ищем идентичные строки
+                    if (point.OrderNumber == currPoint.OrderNumber)
+                    {
+                        newP = false;
+                        //если точка не идентична, то добавляется в список на обновление
+                        if (!(point.City == currPoint.City &
+                            point.Street == currPoint.Street &
+                            point.House == currPoint.House &
+                            point.Korp == currPoint.Korp &
+                            point.Interval == currPoint.Interval))
+                        {
+                            currPoint.PointType = point.PointType;
+                            currPoint.Comment = point.Comment;
+                            currPoint.ID_Route = point.ID_Route;
+                            currPoint.PointNumber = point.PointNumber;
+
+                            updateDic.Add(currPoint, point.ID_Point);
+                            //updateList.Add(currPoint);
+                        }
+                    }
+                }
+                //ищем новые точки
+                if (newP)
+                    newList.Add(currPoint);
+            }
+
+            
+            //ищем точки на удаление
+            foreach (var point in Data)
+            {
+                var delP = true;
+                foreach (var sPoint in vData)
+                {
+                    if (sPoint.OrderNumber == point.OrderNumber)
+                    {
+                        delP = false;
+                    }
+                }
+                if (delP)
+                    deleteList.Add(point);
+            }
+
+            //Открываем окно изменений
+            GUI.ChangesPg changesPage = new GUI.ChangesPg(errorList, newList, updateDic, deleteList);
+            changesPage.ShowDialog();
+
+            //Добавляем исправленые точки
+            foreach (var point in _errorPoints)
+            {
+                try
+                {
+                    db.InsertPoint(
+                        point.OrderNumber,
+                        point.City,
+                        point.Street,
+                        point.House,
+                        point.Korp,
+                        point.Interval,
+                        point.PointNumber,
+                        point.PointType,
+                        point.ID_Session,
+                        point.ID_Route
+                        );
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+                
+            }
+
+            //Добавляем новые точки
+            foreach (var point in _newPoints)
+            {
+                try
+                {
+                    db.InsertPoint(
+                        point.OrderNumber,
+                        point.City,
+                        point.Street,
+                        point.House,
+                        point.Korp,
+                        point.Interval,
+                        point.PointNumber,
+                        point.PointType,
+                        point.ID_Session,
+                        point.ID_Route
+                        );
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
+
+            //Обновляем точки
+            foreach (var pointKVP in _updateDic)
+            {
+                if (pointKVP.Key.Comment == null)
+                    pointKVP.Key.Comment = "";
+                var route = db.GetRouteById(pointKVP.Key.ID_Route);
+                try
+                {
+                    db.ChangePoint(pointKVP.Value,
+                        route.RouteNumber,
+                        pointKVP.Key.Interval,
+                        pointKVP.Key.PointNumber,
+                        pointKVP.Key.PointType,
+                        pointKVP.Key.ID_Session,
+                        pointKVP.Key.Comment,
+                        pointKVP.Key.Street,
+                        pointKVP.Key.House,
+                        pointKVP.Key.Korp,
+                        pointKVP.Key.OrderNumber);
+                    //db.UpdatePoint(pointKVP.Value, pointKVP.Key);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+
+            }
+
+            //Удаляем точки
+            foreach (var point in _delPoints)
+            {
+                try
+                {
+                    db.deletePoint(point.ID_Point);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
+
+            setRoutes();
+            InitializeMap();
+
+            updateDic.Clear();
+            errorList.Clear();
+            newList.Clear();
+            deleteList.Clear();
+            verifdData.Clear();
+            _errorPoints.Clear();
+            _updateDic.Clear();
+            _newPoints.Clear();
+            _delPoints.Clear();
+
+        }
+
+        private void SheetVerif (ISheet sheet)
+        {
+            for (var q = 1; q <= sheet.LastRowNum; q++)
+            {
+                var currentRow = sheet.GetRow(q);
+                if (currentRow != null)
+                {
+                    var rowStatus = true;
+                    for (int column = 0; column < 6; column++)
+                    {
+                        var Value = Convert.ToString(currentRow.GetCell(column));
+                        if (Value == "" && column != 4)
+                        {
+                            rowStatus = false;
+                        }
+
+
+
+                        if (column == 5)
+                        {
+                            Regex r = new Regex(@"\s{2,}");
+                            Value = r.Replace(Value, " ");
+                            if ((Value == "с 9:00 до 21:00") ||
+                            (Value == "с 9:00 до 12:00") ||
+                            (Value == "с 12:00 до 15:00") ||
+                            (Value == "с 15:00 до 18:00") ||
+                            (Value == "с 18:00 до 21:00"))
+                            {
+                                switch (column)
+                                {
+                                    case (0):
+                                        order = Value;
+                                        break;
+                                    case (1):
+                                        city = Value;
+                                        break;
+                                    case (2):
+                                        street = Value;
+                                        break;
+                                    case (3):
+                                        house = Value;
+                                        break;
+                                    case (4):
+                                        korp = Value;
+                                        break;
+                                    case (5):
+                                        interval = Value;
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                rowStatus = false;
+                                interval = Value;
+                            }
+                        }
+                        else
+                        {
+                            switch (column)
+                            {
+                                case (0):
+                                    order = Value;
+                                    break;
+                                case (1):
+                                    city = Value;
+                                    break;
+                                case (2):
+                                    street = Value;
+                                    break;
+                                case (3):
+                                    house = Value;
+                                    break;
+                                case (4):
+                                    korp = Value;
+                                    break;
+                                case (5):
+                                    interval = Value;
+                                    break;
+                            }
+                        }
+
+
+                    }
+
+                    var currPoint = new Point
+                    {
+                        OrderNumber = order,
+                        City = city,
+                        Street = street,
+                        House = house,
+                        Korp = korp,
+                        Interval = interval,
+                        PointNumber = 0,
+                        PointType = 1,
+                        ID_Session = sessionId,
+                        ID_Route = 0
+                    };
+
+                    try
+                    {
+                        if (rowStatus)
+                        {
+                            // q+1 ,где 1 - заговок таблицы , чтобы точки совпадали с номером строчки
+                            //db.InsertPoint(order, city, street, house, korp, interval, q + 1, 1, sessionId, 0);
+                            verifdData.Add(currPoint);
+                        }
+
+                    }
+                    catch (Exception)
+                    {
+                        rowStatus = false;
+
+                    }
+
+                    if (!rowStatus)
+                    {
+                        errorList.Add(currPoint);
+                    }
+
+                }
+            }
+        }
+
 
 
         private void Import_click(object sender, RoutedEventArgs e)
         {
+            #region base_import
             bool hasRoutes = db.GetRoutsBySession(sessionId).Count != 0;
             if (!hasRoutes)
             {
@@ -748,308 +1207,44 @@ namespace LProject
                     }
                 }
             }
+            #endregion
 
-            List<ErrorPoint> errorListColl = new List<ErrorPoint>() { };
+            
+            //проверка данных
+            SheetVerif(sheet);
 
-            if (firstImport)
+            int q = 0;
+            foreach (var row in verifdData)
             {
-
-                for (var q = 1; q <= sheet.LastRowNum; q++)
+                
+                try
                 {
-                    var currentRow = sheet.GetRow(q);
-                    if (currentRow != null)
-                    {
-                        var rowStatus = true;
-                        for (int column = 0; column < 6; column++)
-                        {
-                            var Value = Convert.ToString(currentRow.GetCell(column));
-                            if (Value == "" && column != 4)
-                            {
-                                rowStatus = false;
-                            }
-
-
-
-                            if (column == 5)
-                            {
-                                Regex r = new Regex(@"\s{2,}");
-                                Value = r.Replace(Value, " ");
-                                if ((Value == "с 9:00 до 21:00") ||
-                                (Value == "с 9:00 до 12:00") ||
-                                (Value == "с 12:00 до 15:00") ||
-                                (Value == "с 15:00 до 18:00") ||
-                                (Value == "с 18:00 до 21:00"))
-                                {
-                                    switch (column)
-                                    {
-                                        case (0):
-                                            order = Value;
-                                            break;
-                                        case (1):
-                                            city = Value;
-                                            break;
-                                        case (2):
-                                            street = Value;
-                                            break;
-                                        case (3):
-                                            house = Value;
-                                            break;
-                                        case (4):
-                                            korp = Value;
-                                            break;
-                                        case (5):
-                                            interval = Value;
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    rowStatus = false;
-                                    interval = Value;
-                                }
-                            }
-                            else
-                            {
-                                switch (column)
-                                {
-                                    case (0):
-                                        order = Value;
-                                        break;
-                                    case (1):
-                                        city = Value;
-                                        break;
-                                    case (2):
-                                        street = Value;
-                                        break;
-                                    case (3):
-                                        house = Value;
-                                        break;
-                                    case (4):
-                                        korp = Value;
-                                        break;
-                                    case (5):
-                                        interval = Value;
-                                        break;
-                                }
-                            }
-
-
-                        }
-                        try
-                        {
-                            if (rowStatus)
-                            {
-                                // q+1 ,где 1 - заговок таблицы , чтобы точки совпадали с номером строчки
-                                db.InsertPoint(order, city, street, house, korp, interval, q + 1, 1, sessionId, 0);
-                            }
-
-                        }
-                        catch (Exception)
-                        {
-                            rowStatus = false;
-
-                        }
-
-                        if (!rowStatus)
-                        {
-                            errorListColl.Add(new ErrorPoint
-                            {
-                                OrderNumber = order,
-                                City = city,
-                                Street = street,
-                                House = house,
-                                Korp = korp,
-                                Interval = interval,
-                                PointNumber = (q + 1).ToString(),
-                                PointType = 1.ToString(),
-                                ID_Session = sessionId.ToString(),
-                                ID_Route = 0.ToString(),
-                            });
-                        }
-
-                    }
+                    db.InsertPoint(row.OrderNumber,
+                        row.City,
+                        row.Street,
+                        row.House,
+                        row.Korp,
+                        row.Interval,
+                        0,
+                        1, 
+                        sessionId, 0);
+                    q++;
                 }
-                firstImport = false;
-
-            }
-            else
-            {
-                for (var q = 1; q <= sheet.LastRowNum; q++)
+                catch (Exception)
                 {
-                    var currentRow = sheet.GetRow(q);
-                    if (currentRow != null)
-                    {
-                        //Ищем совпадения
-                        var orderFound = FindOrder(Convert.ToString(currentRow.GetCell(0)), Data);
-                        //Если совпадения найдены
-                        if (orderFound > 0)
-                        {
-                            //Проверяем новую точку на ошибки
-                            var rowStatus = true;
-                            for (int column = 0; column < 6; column++)
-                            {
-                                var Value = Convert.ToString(currentRow.GetCell(column));
-                                if (Value == "" && column != 4)
-                                {
-                                    rowStatus = false;
-                                }
-
-                                if (column == 5)
-                                {
-                                    Regex r = new Regex(@"\s{2,}");
-                                    Value = r.Replace(Value, " ");
-                                    if ((Value == "с 9:00 до 21:00") ||
-                                    (Value == "с 9:00 до 12:00") ||
-                                    (Value == "с 12:00 до 15:00") ||
-                                    (Value == "с 15:00 до 18:00") ||
-                                    (Value == "с 18:00 до 21:00"))
-                                    {
-
-                                    }
-                                    else
-                                    {
-                                        rowStatus = false;
-                                    }
-                                }
-                            }
-                            
-
-                            //Находим нужную точку в DB
-                            db.ChangePoint
-
-
-                            //Если не пройдена проверка добавляем в ErrorList с пометкой обновления
-
-                            //Если пройдена то обновляем информацию в DB
-
-                            //Записываем результат в Log
-                            //Log состоит из номера заказа, и статуса (обновлен, удален, добавлен)
-                        }
-                        //Если совпадения не найдены
-                        else
-                        {
-                            var rowStatus = true;
-                            for (int column = 0; column < 6; column++)
-                            {
-                                var Value = Convert.ToString(currentRow.GetCell(column));
-                                if (Value == "" && column != 4)
-                                {
-                                    rowStatus = false;
-                                }
-
-
-
-                                if (column == 5)
-                                {
-                                    Regex r = new Regex(@"\s{2,}");
-                                    Value = r.Replace(Value, " ");
-                                    if ((Value == "с 9:00 до 21:00") ||
-                                    (Value == "с 9:00 до 12:00") ||
-                                    (Value == "с 12:00 до 15:00") ||
-                                    (Value == "с 15:00 до 18:00") ||
-                                    (Value == "с 18:00 до 21:00"))
-                                    {
-                                        switch (column)
-                                        {
-                                            case (0):
-                                                order = Value;
-                                                break;
-                                            case (1):
-                                                city = Value;
-                                                break;
-                                            case (2):
-                                                street = Value;
-                                                break;
-                                            case (3):
-                                                house = Value;
-                                                break;
-                                            case (4):
-                                                korp = Value;
-                                                break;
-                                            case (5):
-                                                interval = Value;
-                                                break;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        rowStatus = false;
-                                        interval = Value;
-                                    }
-                                }
-                                else
-                                {
-                                    switch (column)
-                                    {
-                                        case (0):
-                                            order = Value;
-                                            break;
-                                        case (1):
-                                            city = Value;
-                                            break;
-                                        case (2):
-                                            street = Value;
-                                            break;
-                                        case (3):
-                                            house = Value;
-                                            break;
-                                        case (4):
-                                            korp = Value;
-                                            break;
-                                        case (5):
-                                            interval = Value;
-                                            break;
-                                    }
-                                }
-
-
-                            }
-                            try
-                            {
-                                if (rowStatus)
-                                {
-                                    // q+1 ,где 1 - заговок таблицы , чтобы точки совпадали с номером строчки
-                                    db.InsertPoint(order, city, street, house, korp, interval, q + 1, 1, sessionId, 0);
-                                }
-
-                            }
-                            catch (Exception)
-                            {
-                                rowStatus = false;
-
-                            }
-
-                            if (!rowStatus)
-                            {
-                                errorListColl.Add(new ErrorPoint
-                                {
-                                    OrderNumber = order,
-                                    City = city,
-                                    Street = street,
-                                    House = house,
-                                    Korp = korp,
-                                    Interval = interval,
-                                    PointNumber = (q + 1).ToString(),
-                                    PointType = 1.ToString(),
-                                    ID_Session = sessionId.ToString(),
-                                    ID_Route = 0.ToString(),
-                                });
-                            }
-
-                        }
-
-
-                    }
                 }
             }
 
+            
+            //MessageBox.Show("Импорт завершен");
 
-            MessageBox.Show("Импорт завершен");
 
-            if (errorListColl.Count > 0)
+
+            if (errorList.Count > 0)
             {
-                GUI.ErrorList errorListWin = new GUI.ErrorList(errorListColl);
-                errorListWin.ShowDialog();
+                //Открываем окно изменений
+                GUI.ChangesPg changesPage = new GUI.ChangesPg(errorList, newList, updateDic, deleteList);
+                changesPage.ShowDialog();
 
                 foreach (var point in _errorPoints)
                 {
@@ -1060,10 +1255,10 @@ namespace LProject
                         point.House,
                         point.Korp,
                         point.Interval,
-                        Convert.ToInt32(point.PointNumber),
-                        Convert.ToInt32(point.PointType),
-                        Convert.ToInt32(point.ID_Session),
-                        Convert.ToInt32(point.ID_Route)
+                        point.PointNumber,
+                        point.PointType,
+                        point.ID_Session,
+                        point.ID_Route
                         );
                 }
             }
@@ -1071,8 +1266,12 @@ namespace LProject
             setRoutes();
             InitializeMap();
             _errorPoints.Clear();
+            errorList.Clear();
+            verifdData.Clear();
             firstImport = false;
         }
+
+        
 
         private int FindOrder(string order, List<Point> Data)
         {

@@ -26,6 +26,7 @@
 
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="20,0,0,0">
             <Button Content="Импорт" x:Name ="Import" Click="Import_click" Height="23" Width="70" Margin="0,0,5,0" MinWidth="70" MinHeight="23"/>
+            <Button Content="Обновить" x:Name ="Refresh" Click="Refresh_click" Height="23" Width="70" Margin="0,0,5,0" MinWidth="70" MinHeight="23"/>            
             <Button Content="Экспорт" x:Name ="Export" Click="Export_click" Height="23" Width="70" Margin="0,0,5,0"  MinWidth="70" MinHeight="23"/>
             <Button Content="Архивировать" x:Name ="Archive" Click="Archive_click" Height="23" Width="100" Margin="0,0,5,0"  MinWidth="100" MinHeight="23" />
             <Button Content="Разархивировать" x:Name ="Unarchive" Click="Unarchive_click" Height="23" Width="100"  MinWidth="100" MinHeight="23" Margin="0,0,5,0" />

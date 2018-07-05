@@ -1,0 +1,206 @@
+﻿<Window x:Class="LProject.GUI.ChangesPg"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LProject.GUI"
+        mc:Ignorable="d"
+        Title="Изменения" Height="300" Width="603.144" Closing="ChangesPg_Closing">
+    <TabControl>
+        <TabItem Header="Ошибочные точки">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="1*"/>
+
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="326*"/>
+                    <ColumnDefinition Width="109*"/>
+                    <ColumnDefinition Width="36*"/>
+                    <ColumnDefinition Width="127*"/>
+
+                </Grid.ColumnDefinitions>
+                <ListBox x:Name="LbErrPoints" HorizontalAlignment="Left" Height="195" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" Width="326" Grid.RowSpan="2">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding OrderNumber}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <StackPanel Grid.Column="1" Grid.Row="1" Margin="0,0,0,38.5" Grid.RowSpan="2">
+                    <TextBlock Margin="4" >Интернет-заказ:</TextBlock>
+                    <TextBlock Margin="4" >Город:</TextBlock>
+                    <TextBlock Margin="4" >Улица:</TextBlock>
+                    <TextBlock Margin="4" >Дом:</TextBlock>
+                    <TextBlock Margin="4" >Корпус:</TextBlock>
+                    <TextBlock Margin="4" >Интервал:</TextBlock>
+                </StackPanel>
+
+
+
+                <StackPanel Grid.Column="2" Grid.Row="1" DataContext="{Binding ElementName=LbErrPoints, Path=SelectedItem}" Grid.ColumnSpan="2" Margin="0,0,0,38.5" Grid.RowSpan="2">
+                    <TextBox x:Name="EcbOrderNumber" Margin="2"  Text="{Binding Path=OrderNumber}"></TextBox>
+                    <TextBox x:Name="EcbCity" Margin="2"  Text="{Binding Path=City}"></TextBox>
+                    <TextBox x:Name="EcbStreet" Margin="2"  Text="{Binding Path=Street}"></TextBox>
+                    <TextBox x:Name="EcbHouse" Margin="2"  Text="{Binding Path=House}"></TextBox>
+                    <TextBox x:Name="EcbKorp" Margin="2"  Text="{Binding Path=Korp}"></TextBox>
+                    <!--<ComboBox Margin="2"  Text="{Binding Path=Interval}"></ComboBox>-->
+                    <TextBox x:Name="EcbInt" Margin="2"  Text="{Binding Path=Interval}"></TextBox>
+                    <Button x:Name="EbAdd" Content="Добавить" Margin="10" Click="EbAdd_Click"></Button>
+                </StackPanel>
+
+            </Grid>
+        </TabItem>
+        <TabItem Header="Новые точки">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="1*"/>
+
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="326*"/>
+                    <ColumnDefinition Width="109*"/>
+                    <ColumnDefinition Width="36*"/>
+                    <ColumnDefinition Width="127*"/>
+
+                </Grid.ColumnDefinitions>
+                <ListBox x:Name="LbNewPoints" HorizontalAlignment="Left" Height="195" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" Width="326" Grid.RowSpan="2">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding OrderNumber}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <StackPanel Grid.Column="1" Grid.Row="1" Margin="0,0,0,38.5" Grid.RowSpan="2">
+                    <TextBlock Margin="4" >Интернет-заказ:</TextBlock>
+                    <TextBlock Margin="4" >Город:</TextBlock>
+                    <TextBlock Margin="4" >Улица:</TextBlock>
+                    <TextBlock Margin="4" >Дом:</TextBlock>
+                    <TextBlock Margin="4" >Корпус:</TextBlock>
+                    <TextBlock Margin="4" >Интервал:</TextBlock>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="2">
+                    <!--<Button x:Name="bAddAll" Content="Добавить все" Margin="10" Click="bAdd_Click"></Button>-->
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Grid.Row="1" DataContext="{Binding ElementName=LbNewPoints, Path=SelectedItem}" Grid.ColumnSpan="2" Margin="0,0,0,38.5" Grid.RowSpan="2">
+                    <TextBox x:Name="NcbOrderNumber" Margin="2"  Text="{Binding Path=OrderNumber}" IsEnabled="False"></TextBox>
+                    <TextBox x:Name="NcbCity" Margin="2"  Text="{Binding Path=City}" IsEnabled="False"></TextBox>
+                    <TextBox x:Name="NcbStreet" Margin="2"  Text="{Binding Path=Street}" IsEnabled="False"></TextBox>
+                    <TextBox x:Name="NcbHouse" Margin="2"  Text="{Binding Path=House}" IsEnabled="False"></TextBox>
+                    <TextBox x:Name="NcbKorp" Margin="2"  Text="{Binding Path=Korp}" IsEnabled="False"></TextBox>
+                    <!--<ComboBox Margin="2"  Text="{Binding Path=Interval}"></ComboBox>-->
+                    <TextBox x:Name="NcbInt" Margin="2"  Text="{Binding Path=Interval}" IsEnabled="False"></TextBox>
+                    <Button x:Name="NbAdd" Content="Добавить" Margin="10" Click="NbAdd_Click"></Button>
+                </StackPanel>
+
+            </Grid>
+        </TabItem>
+        <TabItem Header="Обновляемые точки">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="1*"/>
+
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="326*"/>
+                    <ColumnDefinition Width="109*"/>
+                    <ColumnDefinition Width="36*"/>
+                    <ColumnDefinition Width="127*"/>
+
+                </Grid.ColumnDefinitions>
+                <ListBox x:Name="LbRefPoints" HorizontalAlignment="Left" Height="195" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" Width="326" Grid.RowSpan="2" >
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding OrderNumber}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <StackPanel Grid.Column="1" Grid.Row="1" Margin="0,0,0,38.5" Grid.RowSpan="2">
+                    <TextBlock Margin="4" >Интернет-заказ:</TextBlock>
+                    <TextBlock Margin="4" >Город:</TextBlock>
+                    <TextBlock Margin="4" >Улица:</TextBlock>
+                    <TextBlock Margin="4" >Дом:</TextBlock>
+                    <TextBlock Margin="4" >Корпус:</TextBlock>
+                    <TextBlock Margin="4" >Интервал:</TextBlock>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="2">
+                    <!--<Button x:Name="bRefAll" Content="Обновить все" Margin="10" Click="bAdd_Click"></Button>-->
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Grid.Row="1" DataContext="{Binding ElementName=LbRefPoints, Path=SelectedItem}" Grid.ColumnSpan="2" Margin="0,0,0,38.5" Grid.RowSpan="2">
+                    <TextBox x:Name="RcbOrderNumber" Margin="2"  Text="{Binding Path=OrderNumber}" IsEnabled="False"></TextBox>
+                    <TextBox x:Name="RcbCity" Margin="2"  Text="{Binding Path=City}" IsEnabled="False"></TextBox>
+                    <TextBox x:Name="RcbStreet" Margin="2"  Text="{Binding Path=Street}" IsEnabled="False"></TextBox>
+                    <TextBox x:Name="RcbHouse" Margin="2"  Text="{Binding Path=House}" IsEnabled="False"></TextBox>
+                    <TextBox x:Name="RcbKorp" Margin="2"  Text="{Binding Path=Korp}" IsEnabled="False"></TextBox>
+                    <!--<ComboBox Margin="2"  Text="{Binding Path=Interval}"></ComboBox>-->
+                    <TextBox x:Name="RcbInt" Margin="2"  Text="{Binding Path=Interval}" IsEnabled="False"></TextBox>
+                    <Button x:Name="bRef" Content="Обновить" Margin="10" Click="RbRef_Click"></Button>
+                </StackPanel>
+
+            </Grid>
+        </TabItem>
+
+        <TabItem Header="Удаляемые точки">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="1*"/>
+
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="326*"/>
+                    <ColumnDefinition Width="109*"/>
+                    <ColumnDefinition Width="36*"/>
+                    <ColumnDefinition Width="127*"/>
+
+                </Grid.ColumnDefinitions>
+                <ListBox x:Name="LbDelPoints" HorizontalAlignment="Left" Height="195" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" Width="326" Grid.RowSpan="2" >
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding OrderNumber}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <StackPanel Grid.Column="1" Grid.Row="1" Margin="0,0,0,38.5" Grid.RowSpan="2">
+                    <TextBlock Margin="4" >Интернет-заказ:</TextBlock>
+                    <TextBlock Margin="4" >Город:</TextBlock>
+                    <TextBlock Margin="4" >Улица:</TextBlock>
+                    <TextBlock Margin="4" >Дом:</TextBlock>
+                    <TextBlock Margin="4" >Корпус:</TextBlock>
+                    <TextBlock Margin="4" >Интервал:</TextBlock>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="2">
+                    <!--<Button x:Name="bDelAll" Content="Удалить все" Margin="10" Click="bAdd_Click"></Button>-->
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Grid.Row="1" DataContext="{Binding ElementName=LbDelPoints, Path=SelectedItem}" Grid.ColumnSpan="2" Margin="0,0,0,38.5" Grid.RowSpan="2">
+                    <TextBox x:Name="DcbOrderNumber" Margin="2"  Text="{Binding Path=OrderNumber}" IsEnabled="False"></TextBox>
+                    <TextBox x:Name="DcbCity" Margin="2"  Text="{Binding Path=City}" IsEnabled="False"></TextBox>
+                    <TextBox x:Name="DcbStreet" Margin="2"  Text="{Binding Path=Street}" IsEnabled="False"></TextBox>
+                    <TextBox x:Name="DcbHouse" Margin="2"  Text="{Binding Path=House}" IsEnabled="False"></TextBox>
+                    <TextBox x:Name="DcbKorp" Margin="2"  Text="{Binding Path=Korp}" IsEnabled="False"></TextBox>
+                    <!--<ComboBox Margin="2"  Text="{Binding Path=Interval}"></ComboBox>-->
+                    <TextBox x:Name="DcbInt" Margin="2"  Text="{Binding Path=Interval}" IsEnabled="False"></TextBox>
+                    <Button x:Name="DbDel" Content="Удалить" Margin="10" Click="DbDel_Click" IsEnabled="True"></Button>
+                </StackPanel>
+
+            </Grid>
+        </TabItem>
+    </TabControl>
+</Window>

@@ -20,11 +20,10 @@ namespace LProject
     public partial class NewPoint : Window
     {
         DBWork db;
-        int pointNumber;
-        int wayVal;
-        string interVal;
-        int sessionID;
-        int pointType;
+        int pointRN; //номер в маршруте
+        int wayVal; //маршрут
+        string interVal; //интервал
+        int sessionID; //сессия
 
 
         private SessionInterface sesinter;
@@ -33,7 +32,6 @@ namespace LProject
         {
             sessionID = sessionId;
             this.sesinter = sesinter;
-            pointType = 1;
         }
 
         public NewPoint()
@@ -41,6 +39,7 @@ namespace LProject
             db = new DBWork();
             InitializeComponent();
         }
+
         public delegate void DataChangedEventHandler(object sender, EventArgs e);
 
         public event DataChangedEventHandler DataChanged;
@@ -52,9 +51,9 @@ namespace LProject
                 System.Windows.MessageBox.Show("Не все обязательные значения введены");
             else
             {
-                pointNumber = (int)wayNumber.Value;
-                if (pointNumber < db.FindLastPoint(wayVal + 1, interVal) + 1)
-                    db.Shift(wayVal + 1, interVal, pointNumber);
+                //pointRN = (int)wayNumber.Value; // получаем введенное значение
+                //if (pointNumber < db.FindLastPoint(wayVal + 1, interVal) + 1)
+                //    db.Shift(wayVal + 1, interVal, pointNumber);
                 if (Corpes.Text != "")
                     korp = Corpes.Text;
                 var orderNumber = Order.Text;
@@ -63,9 +62,22 @@ namespace LProject
                 var city = City.Text;
                 var street = Street.Text;
                 var interval = interVal;
-                var number = pointNumber;
+                var number = 0; //заглушка?
+                //Если номер больше 0, то вызываем метод сдвига
+                if (wayNumber.Value > 0)
+                {
+                    //Метод возвращает (утверждает) номер точки, осуществляя по необходимости сдвиг
+                    pointRN = GUI.PointRN.NumberInsert((int)wayNumber.Value, db.GetRoutsBySession(sessionID), db.getPointBySession(sessionID), wayVal);
+                }
+                //если равен или меньше то ставим в конец
+                else
+                {
+                    DBWork db = new DBWork();
+                    pointRN = GUI.PointRN.FirstNumber(db.GetRoutsBySession(sessionID), db.getPointBySession(sessionID), wayVal);
+                }
+                
 
-                db.InsertPoint(orderNumber, city, street, house, korp, interval, number, choosePoint(), sessionID, wayVal);
+                db.InsertPoint(orderNumber, city, street, house, korp, interval, number, pointRN, sessionID, wayVal);
 
                 DataChangedEventHandler handler = DataChanged;
 
@@ -96,7 +108,7 @@ namespace LProject
             var comboBox = sender as ComboBox;
            
             wayVal = (int)comboBox.SelectedItem;
-            wayNumber.Value = db.FindLastPoint(wayVal+1, interVal) + 1;
+            wayNumber.Value = 0;
         }
 
         private void intervalComboBox_Loaded(object sender, RoutedEventArgs e)
@@ -114,7 +126,6 @@ namespace LProject
             var comboBox = sender as ComboBox;
 
             interVal = comboBox.SelectedItem as string;
-            wayNumber.Value = db.FindLastPoint(wayVal + 1, interVal) + 1;
         }
 
 
@@ -122,55 +133,5 @@ namespace LProject
         {
             this.Close();
         }
-
-        public int choosePoint()
-        {
-            if (rb1.IsChecked == true)
-            {
-                pointType = 1;
-            }
-            else if (rb2.IsChecked == true)
-            {
-                pointType = 2;
-            }
-            else if (rb3.IsChecked == true)
-            {
-                pointType = 3;
-            }
-            else if (rb4.IsChecked == true)
-            {
-                pointType = 4;
-            }
-            else if (rb5.IsChecked == true)
-            {
-                pointType = 5;
-            }
-            else if (rb6.IsChecked == true)
-            {
-                pointType = 6;
-            }
-            else if (rb7.IsChecked == true)
-            {
-                pointType = 7;
-            }
-            else if (rb8.IsChecked == true)
-            {
-                pointType = 8;
-            }
-            else if (rb9.IsChecked == true)
-            {
-                pointType = 9;
-            }
-            else if (rb10.IsChecked == true)
-            {
-                pointType = 10;
-            }
-
-            return pointType;
-
-        }
-
-        
-
     }
 }
