@@ -283,6 +283,7 @@ namespace LProject
             newPoint.PointNumber = number;
             newPoint.PointType = type;
 
+
             Table<Route> route = db.GetTable<Route>();
 
             var query = (from cust in route
@@ -296,6 +297,29 @@ namespace LProject
             //point.InsertOnSubmit(newPoint);
 
             db.SubmitChanges();
+        }
+
+        public void UpdatePoint (int id, Point point)
+        {
+            //обновление записи
+            //UPDATE point
+            //SET City=point.city,
+            //Street=point.street,
+            //...
+            //WHERE OrderNumber=point.ON
+
+            Table<Point> pointT = db.GetTable<Point>();
+
+            var query = (from p in pointT
+                         where p.OrderNumber == point.OrderNumber
+                         select p).SingleOrDefault();
+
+            var changes = new Dictionary<>
+
+            query = point;
+
+            db.SubmitChanges();
+
         }
 
         public List<Route> GetRoutsBySession(int SessionId)

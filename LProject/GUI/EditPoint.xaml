@@ -34,7 +34,7 @@
         </Grid.ColumnDefinitions>
         <Label Margin="26,122,200,135">Маршрут</Label>
         <Label Margin="26,146,200,107">Интервал</Label>
-        <Label Margin="26,175,213,84" Content="№ точки"/>
+        <Label Margin="26,175,213,84" Content="№ в маршруте"/>
         <Label Margin="19,215,288,39">Комментарий</Label>
         <TextBox Name="Comment" Margin="110,214,83,8"></TextBox>
         <ComboBox
